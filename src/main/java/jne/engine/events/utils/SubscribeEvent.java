@@ -1,4 +1,6 @@
-package jne.engine.events;
+package jne.engine.events.utils;
+
+import jne.engine.events.types.Event;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -10,4 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(value = METHOD)
 public @interface SubscribeEvent {
     EventPriority priority() default EventPriority.NORMAL;
+
+    Class<?>[] exclusion() default Event.class;
+
 }

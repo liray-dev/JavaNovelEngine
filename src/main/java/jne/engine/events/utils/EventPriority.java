@@ -1,4 +1,4 @@
-package jne.engine.events;
+package jne.engine.events.utils;
 
 public enum EventPriority
 {

@@ -1,8 +1,7 @@
-package jne.sandbox;
+package sandbox;
 
 import jne.engine.core.JNE;
 import jne.engine.utils.GameConfiguration;
-import jne.sandbox.sreens.MainScreen;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ public class SandBoxLauncher {
             File jarLauncher = new File(SandBoxLauncher.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             String launcherFolderPath = jarLauncher.getParent();
 
-            File launcherDir = new File(launcherFolderPath + "/launcher/SandBox");
-            File assetsDir = new File(launcherFolderPath + "/launcher/SandBox/resources");
+            File launcherDir = new File(launcherFolderPath + "/launcher");
+            File assetsDir = new File(launcherFolderPath + "/launcher/resources");
 
             if (!launcherDir.exists()) {
                 launcherDir.mkdirs();
@@ -37,8 +36,8 @@ public class SandBoxLauncher {
 
             folderInformation = new GameConfiguration.FolderInformation(launcherDir, assetsDir);
         } else {
-            File launcherDir = new File("./launcher/SandBox");
-            File assetsDir = new File("./launcher/SandBox/resources");
+            File launcherDir = new File("./launcher/");
+            File assetsDir = new File("./launcher/resources");
 
             if (!launcherDir.exists()) {
                 launcherDir.mkdirs();
@@ -53,7 +52,7 @@ public class SandBoxLauncher {
 
         GameConfiguration configuration = new GameConfiguration(displayInformation, folderInformation);
 
-        (new JNE(configuration, new MainScreen())).run();
+        (new JNE(configuration, null)).run();
     }
 
 }

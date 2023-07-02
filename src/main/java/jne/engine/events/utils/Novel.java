@@ -1,4 +1,4 @@
-package jne.engine.events;
+package jne.engine.events.utils;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

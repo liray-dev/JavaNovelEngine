@@ -3,7 +3,7 @@ package jne.engine.screens.components;
 
 import jne.engine.utils.*;
 
-public class Component<SELF extends Component<SELF>> implements IScreenListener, IComponent, IWrapper {
+public class Component<SELF extends Component<SELF>> implements IComponentsListener, IComponent, IWrapper {
 
     protected Area area;
 
@@ -96,23 +96,13 @@ public class Component<SELF extends Component<SELF>> implements IScreenListener,
     @Override
     final public void keyTyped(char typedChar, int keyCode) {
         if (this.visible && this.active) {
-            onKeyTyped(keyCode, typedChar, KeyboardType.START_PRESSED);
+            onKeyTyped(keyCode, typedChar, KeyboardType.START);
         }
     }
 
     /*
         Overwrite realization
      */
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void close() {
-
-    }
 
     @Override
     public void tick() {

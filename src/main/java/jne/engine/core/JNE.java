@@ -1,14 +1,9 @@
 package jne.engine.core;
 
-import jne.engine.events.Event;
-import jne.engine.events.EventListenerHelper;
-import jne.engine.events.test.CoolEvent;
-import jne.engine.events.test.TestEvents;
-import jne.engine.events.test.TestEvents2;
-import jne.engine.screens.listeners.ScreenListener;
+import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.text.Font;
 import jne.engine.utils.*;
-import jne.engine.events.Novel;
+import jne.engine.events.utils.Novel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -18,6 +13,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static jne.engine.utils.Util.getSystemTime;
@@ -38,7 +35,7 @@ public class JNE implements ICore {
     private int fpsCounter;
     public int debugFPS;
 
-    public JNE(GameConfiguration configuration, ScreenListener initScreen) {
+    public JNE(GameConfiguration configuration, ComponentsListener initScreen) {
         instance = this;
         this.launcherDir = configuration.folderInfo.launcherDir;
         this.assetsDir = configuration.folderInfo.assetsDir;
@@ -60,11 +57,9 @@ public class JNE implements ICore {
 
         try {
             this.init();
-        } catch (Throwable throwable) {
-            System.out.println(throwable.getMessage());
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
-
-        WINDOW.screenManager.setScreen(WINDOW.screenManager.initScreen);
 
         WINDOW.changeOrtho();
         while (true) {
@@ -72,8 +67,8 @@ public class JNE implements ICore {
                 while (this.running) {
                     this.loop();
                 }
-            } catch (Throwable throwable) {
-                System.out.println(throwable.getMessage());
+            } catch (Exception exception) {
+                exception.printStackTrace();
             } finally {
                 this.shutdown();
             }
@@ -89,13 +84,21 @@ public class JNE implements ICore {
         WINDOW.initDisplayMode();
         WINDOW.createDisplay();
 
+        this.font = new Font(new FileInputStream(assetsDir.getAbsoluteFile() + "/PressStart2P-Regular.ttf"), 16, true, java.awt.Font.BOLD);
+
+        WINDOW.screenManager.setScreen(WINDOW.screenManager.initScreen);
+
         List<Class<?>> classes = ClassScanner.scanClassesWithAnnotation(Novel.class);
 
         for (Class<?> clazz : classes) {
-            System.out.println("Found class with annotation: " + clazz.getName());
+            try {
+                Constructor<?> declaredConstructors = clazz.getDeclaredConstructor();
+                declaredConstructors.newInstance();
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                System.out.println("The class does not have an empty constructor: " + clazz.getName());
+            }
         }
 
-        this.font = new Font(new FileInputStream(assetsDir.getAbsoluteFile() + "/PressStart2P-Regular.ttf"), 16, true, java.awt.Font.BOLD);
     }
 
     /**

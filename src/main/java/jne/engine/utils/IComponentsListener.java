@@ -1,10 +1,6 @@
 package jne.engine.utils;
 
-public interface IScreenListener {
-
-    void init();
-
-    void close();
+public interface IComponentsListener {
 
     void render(float partialTicks);
 

@@ -1,12 +1,16 @@
 package jne.engine.events;
 
+import jne.engine.events.types.Event;
+import jne.engine.events.utils.EventListener;
+import jne.engine.events.utils.SubscribeEvent;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class EventListenerHelper {
 
-    private final static Map<Class<? extends Event>, Set<EventListener>> listeners = new HashMap<>();
+    private final static Map<Class<? extends Event>, TreeSet<EventListener>> listeners = new HashMap<>();
 
     public static void register(Object object) {
         Class<?> clazz = object.getClass();
@@ -17,7 +21,7 @@ public class EventListenerHelper {
         for (Method method : methods) {
             SubscribeEvent annotation = method.getAnnotation(SubscribeEvent.class);
             if (annotation != null) {
-                filteredMethods.add(new EventListener(annotation.priority(), object, method));
+                filteredMethods.add(new EventListener(annotation.exclusion(), annotation.priority(), object, method));
             }
         }
 
@@ -35,28 +39,34 @@ public class EventListenerHelper {
             });
 
             eventListeners.add(it);
+
+
         });
     }
 
     public static void unregister(Object object) {
         for (Set<EventListener> eventListeners : listeners.values()) {
-            eventListeners.removeIf(listener -> listener.getSubscriber().getClass() == object.getClass());
+            eventListeners.removeIf(listener -> listener.getSubscriber() == object);
         }
     }
 
     public static void post(Event event) {
-        Set<EventListener> eventListeners = listeners.get(event.getClass());
+        TreeSet<EventListener> eventListeners = new TreeSet<>(listeners.get(event.getClass()));
 
-        if (eventListeners == null) return;
+
+        HashSet<Class<?>> exclusion = new HashSet<>();
 
         eventListeners.forEach(it -> {
             if (event.isCanceled()) {
                 return;
             }
             try {
-                it.getMethod().invoke(it.getSubscriber(), event);
+                if (!exclusion.contains(it.getSubscriber().getClass())) {
+                    exclusion.addAll(Arrays.asList(it.getExclusion()));
+                    it.getMethod().invoke(it.getSubscriber(), event);
+                }
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         });
 

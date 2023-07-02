@@ -1,16 +1,14 @@
-package jne.scenemaker;
+package jne.engine;
 
 import jne.engine.core.JNE;
 import jne.engine.utils.GameConfiguration;
-import jne.engine.events.Novel;
-import jne.scenemaker.screens.LoadScreen;
+import jne.scenemaker.screens.ScreenCreator;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@Novel
-public class SceneMakerLauncher {
+public class Launcher {
 
     public static final boolean DEBUG = true;
 
@@ -23,11 +21,11 @@ public class SceneMakerLauncher {
 
         GameConfiguration.FolderInformation folderInformation;
         if (!DEBUG) {
-            File jarLauncher = new File(SceneMakerLauncher.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            File jarLauncher = new File(Launcher.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             String launcherFolderPath = jarLauncher.getParent();
 
-            File launcherDir = new File(launcherFolderPath + "/launcher/SceneMaker");
-            File assetsDir = new File(launcherFolderPath + "/launcher/SceneMaker/resources");
+            File launcherDir = new File(launcherFolderPath + "/launcher");
+            File assetsDir = new File(launcherFolderPath + "/launcher/resources");
 
             if (!launcherDir.exists()) {
                 launcherDir.mkdirs();
@@ -39,8 +37,8 @@ public class SceneMakerLauncher {
 
             folderInformation = new GameConfiguration.FolderInformation(launcherDir, assetsDir);
         } else {
-            File launcherDir = new File("./launcher/SceneMaker");
-            File assetsDir = new File("./launcher/SceneMaker/resources");
+            File launcherDir = new File("./launcher");
+            File assetsDir = new File("./launcher/resources");
 
             if (!launcherDir.exists()) {
                 launcherDir.mkdirs();
@@ -55,7 +53,7 @@ public class SceneMakerLauncher {
 
         GameConfiguration configuration = new GameConfiguration(displayInformation, folderInformation);
 
-        (new JNE(configuration, new LoadScreen())).run();
+        (new JNE(configuration, new ScreenCreator())).run();
     }
 
 }

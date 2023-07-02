@@ -1,4 +1,4 @@
-package jne.engine.events;
+package jne.engine.events.utils;
 
 
 import lombok.Data;
@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor
 public class EventListener implements Comparable<EventListener> {
 
+    private final Class<?>[] exclusion;
     private final EventPriority priority;
     private final Object subscriber;
     private final Method method;

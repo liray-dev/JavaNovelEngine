@@ -16,7 +16,7 @@ public class ResourceLocation implements ICore {
     }
 
     public String getName() {
-        return getFile().getName();
+        return getFile().getName().replace(".png", "");
     }
 
     public File getFile() {

@@ -2,15 +2,13 @@ package jne.engine.screens;
 
 import jne.engine.events.EventListenerHelper;
 import jne.engine.events.types.ScreenEvent;
-import jne.engine.screens.components.Component;
 import jne.engine.screens.listeners.ComponentsListener;
+import jne.engine.texture.TextureContainer;
 import jne.engine.utils.IWrapper;
 import jne.engine.utils.KeyboardType;
 import jne.engine.utils.MouseClickType;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,9 +34,10 @@ public class ScreenManager implements IWrapper {
      */
     public void render(float partialTick) {
         RENDER.color(Color.WHITE, () -> {
-            RENDER.drawQuad(50, 50, -1, width - 50, height - 50);
+            RENDER.drawTexturedQuad(0, 0, WINDOW.desktop.getWidth(), WINDOW.desktop.getHeight(), TextureContainer.get("background"));
         });
-        new ScreenEvent.Render(partialTick).post();
+
+        new ScreenEvent.Render(partialTick, width, height).post();
     }
 
     /**
@@ -103,6 +102,7 @@ public class ScreenManager implements IWrapper {
 
         EventListenerHelper.register(screen);
         this.currentScreen = screen;
+        this.currentScreen.resize(width, height);
         this.currentScreen.init();
         this.resize(WINDOW.displayWidth, WINDOW.displayHeight);
     }
@@ -114,12 +114,15 @@ public class ScreenManager implements IWrapper {
             EventListenerHelper.register(subScreen);
             this.subScreens.add(subScreen);
             subScreen.init();
+            subScreen.resize(width, height);
         }
     }
 
     public void removeSubscreen(ComponentsListener subScreen) {
         if (this.subScreens.contains(subScreen)) {
+            new ScreenEvent.Close(subScreen).post();
             EventListenerHelper.unregister(subScreen);
+            subScreen.close();
             this.subScreens.remove(subScreen);
         } else {
             System.out.println("Additional screen not found");
@@ -129,8 +132,9 @@ public class ScreenManager implements IWrapper {
     public void clearSubscreens() {
         Iterator<ComponentsListener> iterator = this.subScreens.iterator();
         while (iterator.hasNext()) {
-            ComponentsListener next = iterator.next();
-            EventListenerHelper.unregister(next);
+            ComponentsListener componentsListener = iterator.next();
+            EventListenerHelper.unregister(componentsListener);
+            componentsListener.close();
             iterator.remove();
         }
     }
@@ -142,18 +146,17 @@ public class ScreenManager implements IWrapper {
     private long lastKeyboardEvent;
     private int keyboardEventButton;
 
-    private double scaleWidth, scaleHeight;
-
     /**
      * Called when resizing the screen, to clearly track the position of the cursor relative to the maximum resolution of the screen
      */
     public void resize(int width, int height) {
-        DisplayMode displaymode = Display.getDesktopDisplayMode();
-        this.width = displaymode.getWidth();
-        this.height = displaymode.getHeight();
+        this.width = width;
+        this.height = height;
 
-        this.scaleWidth = (float) this.width / width;
-        this.scaleHeight = (float) this.height / height;
+        if (currentScreen != null) {
+            this.currentScreen.resize(width, height);
+        }
+        this.subScreens.forEach(it -> it.resize(width, height));
     }
 
     /**
@@ -181,8 +184,8 @@ public class ScreenManager implements IWrapper {
      * Handles computer mouse events
      */
     private void mouse() {
-        int x = (int) ((Mouse.getEventX()) * scaleWidth);
-        int y = (int) (height - ((Mouse.getEventY()) * scaleHeight) - 0.5);
+        int x = Mouse.getEventX();
+        int y = height - Mouse.getEventY();
         int button = Mouse.getEventButton();
 
         boolean flag = true;

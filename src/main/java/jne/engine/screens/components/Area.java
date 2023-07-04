@@ -39,6 +39,8 @@ public class Area {
 
         this.width = x2 - x;
         this.height = y2 - y;
+
+        // Just crutch
     }
 
     public void move(int mouseX, int mouseY, int offsetX, int offsetY) {

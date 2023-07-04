@@ -41,10 +41,10 @@ public class RenderHelper implements IWrapper {
     }
 
     public void color(Color color) {
-        this.color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        this.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, color.getAlpha() / 255F);
     }
 
-    public void color(float r, float g, float b, float a) {
+    private void color(float r, float g, float b, float a) {
         GL11.glColor4f(r, g, b, a);
     }
 
@@ -54,20 +54,20 @@ public class RenderHelper implements IWrapper {
 
     public void drawQuad(float x, float y, float width, float height) {
         BUILDER.begin();
-        BUFFER_HELPER.addQuadData(BUILDER, x,  y, width, height);
+        BUFFER_HELPER.addQuadData(BUILDER, x, y, width, height);
         TESSELLATOR.draw();
     }
 
     public void drawQuad(float x, float y, float z, float width, float height) {
         BUILDER.begin();
-        BUFFER_HELPER.addQuadData(BUILDER, x,  y, z, width, height);
+        BUFFER_HELPER.addQuadData(BUILDER, x, y, z, width, height);
         TESSELLATOR.draw();
     }
 
     public void drawTexturedQuad(float x, float y, float width, float height, Texture texture) {
         texture.bind();
         BUILDER.begin();
-        BUFFER_HELPER.addQuadData(BUILDER, x,  y, width, height);
+        BUFFER_HELPER.addQuadData(BUILDER, x, y, width, height);
         TESSELLATOR.draw();
         texture.unbind();
     }
@@ -75,7 +75,7 @@ public class RenderHelper implements IWrapper {
     public void drawTexturedQuad(float x, float y, float z, float width, float height, Texture texture) {
         texture.bind();
         BUILDER.begin();
-        BUFFER_HELPER.addQuadData(BUILDER, x,  y, z, width, height);
+        BUFFER_HELPER.addQuadData(BUILDER, x, y, z, width, height);
         TESSELLATOR.draw();
         texture.unbind();
     }

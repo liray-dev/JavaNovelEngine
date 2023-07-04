@@ -23,13 +23,9 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
         if (texture != null && !area.isEmpty()) {
 
             RENDER.matrix(() -> {
-                RENDER.color(color);
-                RENDER.drawQuad(area.x, area.y, area.z, area.x2, area.y2);
-                RENDER.clearColor();
-
-                RENDER.color(Color.WHITE);
-                RENDER.drawTexturedQuad(area.x, area.y, area.z, area.x2, area.y2, texture);
-                RENDER.clearColor();
+                RENDER.color(color, () -> {
+                    RENDER.drawTexturedQuad(area.x , area.y, area.z, area.x2, area.y2, texture);
+                });
             });
         }
     }
@@ -47,6 +43,11 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
 
         public SELF texture(Texture texture) {
             instance().texture = texture;
+            return self();
+        }
+
+        public SELF color(Color color) {
+            instance().color = color;
             return self();
         }
 

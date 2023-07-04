@@ -1,4 +1,4 @@
-package jne.scenemaker.screens;
+package jne.scenemaker.screens.components;
 
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.EventPriority;
@@ -6,58 +6,56 @@ import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.Texture;
+import jne.engine.texture.TextureContainer;
 import jne.engine.utils.MouseClickType;
+import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.io.File;
 
-public class ButtonSettingsScreen2 extends ComponentsListener {
-    
-    Texture resize;
-    Texture move;
+public class ButtonSettingsScreen extends ComponentsListener {
 
     @Override
     public void init() {
-        this.resize = new Texture(new File(ENGINE.assetsDir.getAbsoluteFile() + "/resize.png"));
-        this.move = new Texture(new File(ENGINE.assetsDir.getAbsoluteFile() + "/move.png"));
 
         add(GRAPHICS.button()
-                .area(new Area(292, 100, 5, 128, 128))
-                .texture(resize)
-                .onTooltip((component, mouseX, mouseY, tick) -> {
-                    System.out.println("Resize2");
-                })
+                .area(new Area(164, 100, 10, 64, 64))
+                .texture(TextureContainer.get("resize"))
+                .label(GRAPHICS.label().size(1F).text("Ку!\nЧд?\n").centered(true).build(), true)
                 .onPress((component, type) -> {
-                    if (type == MouseClickType.RELEASED) {
-                        killAll();
-                    }
+
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .area(new Area(420, 100, 5, 128, 128))
-                .texture(move)
-                .onTooltip((component, mouseX, mouseY, tick) -> {
-                    System.out.println("Move2");
-                })
+                .area(new Area(228, 100, 10, 64, 64))
+                .texture(TextureContainer.get("move"))
                 .build());
-
-        add(GRAPHICS.texture().area(new Area(200, 200, -3, 256, 256)).texture(move).build());
-
-        super.init();
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW, exclusion = {ScreenCreator.class, ButtonSettingsScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void render(ScreenEvent.Render event) {
         float partialTick = event.getPartialTick();
+
+        RENDER.color(new Color(0f, 0f, 0f, 0.85F), () -> {
+            RENDER.drawQuad(0,0, 1, width, height);
+        });
+
+        RENDER.color(new Color(0.5f, 0.5f, 0.5f, 1F), () -> {
+            float x = width / 2F;
+            float y = height / 2F;
+            RENDER.drawQuad(x - 200, y - 250, 2, x + 200, y + 250);
+        });
+
         render(partialTick);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void move(ScreenEvent.MouseMove event) {
         this.mouseMove(event.getMouseX(), event.getMouseY());
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void input(ScreenEvent.MouseInput event) {
         MouseClickType type = event.getType();
         if (type == MouseClickType.CLICKED) {
@@ -68,17 +66,17 @@ public class ButtonSettingsScreen2 extends ComponentsListener {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void clickMove(ScreenEvent.MouseClickMove event) {
         this.mouseClickMove(event.getMouseX(), event.getMouseY(), event.getButton(), event.getLast());
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void keyboard(ScreenEvent.Keyboard event) {
         this.keyTyped(event.getCharacter(), event.getButton());
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void tick(ScreenEvent.Tick event) {
         this.tick();
     }

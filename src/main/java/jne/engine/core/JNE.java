@@ -1,7 +1,9 @@
 package jne.engine.core;
 
+import jne.engine.events.types.TextureRegistryEvent;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.text.Font;
+import jne.engine.texture.TextureContainer;
 import jne.engine.utils.*;
 import jne.engine.events.utils.Novel;
 import org.lwjgl.LWJGLException;
@@ -39,9 +41,9 @@ public class JNE implements ICore {
         instance = this;
         this.launcherDir = configuration.folderInfo.launcherDir;
         this.assetsDir = configuration.folderInfo.assetsDir;
-
-        WINDOW.setDisplayResolution(configuration.displayInfo.width, configuration.displayInfo.height);
         WINDOW.fullscreen = configuration.displayInfo.fullscreen;
+        WINDOW.displayWidth = configuration.displayInfo.width;
+        WINDOW.displayHeight = configuration.displayInfo.height;
         WINDOW.screenManager.initScreen = initScreen;
     }
 
@@ -83,10 +85,7 @@ public class JNE implements ICore {
         WINDOW.setIcon();
         WINDOW.initDisplayMode();
         WINDOW.createDisplay();
-
-        this.font = new Font(new FileInputStream(assetsDir.getAbsoluteFile() + "/PressStart2P-Regular.ttf"), 16, true, java.awt.Font.BOLD);
-
-        WINDOW.screenManager.setScreen(WINDOW.screenManager.initScreen);
+        this.font = new Font(new FileInputStream(new ResourceLocation("PressStart2P-Regular.ttf").getFile()), 16, true, java.awt.Font.BOLD);
 
         List<Class<?>> classes = ClassScanner.scanClassesWithAnnotation(Novel.class);
 
@@ -99,12 +98,16 @@ public class JNE implements ICore {
             }
         }
 
+        new TextureRegistryEvent(TextureContainer.getInstance()).post();
+
+
+        WINDOW.screenManager.setScreen(WINDOW.screenManager.initScreen);
     }
 
     /**
      * a constant loop that manages all the vital processes of the engine
      */
-    public void loop() {
+    public void loop() throws LWJGLException {
         if (Display.isCreated() && Display.isCloseRequested()) {
             this.shutdown();
         }
@@ -130,19 +133,23 @@ public class JNE implements ICore {
      */
     private void render() {
         GL11.glViewport(0, 0, WINDOW.displayWidth, WINDOW.displayHeight);
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        GL11.glLoadIdentity();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        GL11.glLoadIdentity();
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
         WINDOW.screenManager.render(this.timer.partialTick);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
 
         GL11.glDisable(GL11.GL_BLEND);
+
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
 
     }
 

@@ -51,6 +51,7 @@ public class EventListenerHelper {
     }
 
     public static void post(Event event) {
+        if (!listeners.containsKey(event.getClass())) return;
         TreeSet<EventListener> eventListeners = new TreeSet<>(listeners.get(event.getClass()));
 
 

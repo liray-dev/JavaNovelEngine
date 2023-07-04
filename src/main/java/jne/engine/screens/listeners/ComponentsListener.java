@@ -1,5 +1,6 @@
 package jne.engine.screens.listeners;
 
+import jne.engine.events.types.ScreenEvent;
 import jne.engine.screens.components.Component;
 import jne.engine.utils.IComponentsListener;
 import jne.engine.utils.IWrapper;
@@ -8,13 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class ComponentsListener implements IComponentsListener, IWrapper {
+
+    public int width;
+    public int height;
 
     public void init() {
 
     }
 
     public void close() {
+
+    }
+
+    public void update() {
 
     }
 
@@ -53,6 +62,34 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
         getComponents().forEach(Component::tick);
     }
 
+    final public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        recreate();
+    }
+
+    final public void recreate() {
+        components.clear();
+        init();
+        update();
+    }
+
+    final public void openSubscreen(ComponentsListener subscreen) {
+        WINDOW.screenManager.addSubscreen(subscreen);
+    }
+
+    final public void sendUpdateInfo() {
+        new ScreenEvent.UpdateInfo(this).post();
+    }
+
+    final public void killAll() {
+        WINDOW.screenManager.clearSubscreens();
+    }
+
+    final public void kill() {
+        WINDOW.screenManager.removeSubscreen(this);
+    }
+
     /* Components management */
 
     private final List<Component> components = new ArrayList<Component>();
@@ -66,7 +103,7 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
     }
 
     final public List<Component> getComponents() {
-        return components;
+        return new ArrayList<>(components);
     }
 
     final public <T extends Component> List<T> getComponentsByType(Class<T> componentType) {
@@ -76,16 +113,19 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
                 .collect(Collectors.toList());
     }
 
-    final public void killAll() {
-        WINDOW.screenManager.clearSubscreens();
+    final public <T extends Component> List<T> getComponentsByID(int id, Class<T> componentType) {
+        return components.stream()
+                .filter(componentType::isInstance)
+                .filter(it -> it.id == id)
+                .map(c -> (T) c)
+                .collect(Collectors.toList());
     }
 
-    final public void kill() {
-        WINDOW.screenManager.removeSubscreen(this);
-    }
-
-    final public void subscreen(ComponentsListener subscreen) {
-        WINDOW.screenManager.addSubscreen(subscreen);
+    final public <T extends Component> List<T> getComponentsByID(int id) {
+        return components.stream()
+                .filter(it -> it.id == id)
+                .map(c -> (T) c)
+                .collect(Collectors.toList());
     }
 
 }

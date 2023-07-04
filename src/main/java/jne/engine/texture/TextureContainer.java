@@ -6,10 +6,12 @@ import java.util.HashMap;
 
 public class TextureContainer {
 
-    public final HashMap<String, Texture> textures = new HashMap<>();
+    private static final HashMap<String, Texture> textures = new HashMap<>();
 
-    public void register(ResourceLocation location) {
-        register(location.getName(), new Texture(location));
+    public Texture register(ResourceLocation location) {
+        Texture texture = new Texture(location);
+        register(location.getName(), texture);
+        return texture;
     }
 
     public void register(Texture texture) {
@@ -32,6 +34,13 @@ public class TextureContainer {
         }
     }
 
+    public static Texture get(String name) {
+        if (textures.containsKey(name)) {
+            return textures.get(name);
+        } else {
+            return textures.get("error");
+        }
+    }
 
     private static final TextureContainer INSTANCE = new TextureContainer();
 

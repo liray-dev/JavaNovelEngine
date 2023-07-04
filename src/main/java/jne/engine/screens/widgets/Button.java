@@ -41,7 +41,7 @@ public class Button<SELF extends Button<SELF>> extends TexturedComponent<SELF> {
 
     @Override
     public void onMoveClick(int mouseX, int mouseY, int mouseButton, long lastClickTime) {
-        area.move(mouseX, mouseY, mouseOffsetX, mouseOffsetY);
+
     }
 
     protected SELF self() {

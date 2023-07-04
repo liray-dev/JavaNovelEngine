@@ -13,6 +13,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface SubscribeEvent {
     EventPriority priority() default EventPriority.NORMAL;
 
-    Class<?>[] exclusion() default Event.class;
+    Class<?>[] exclusion() default {};
 
 }

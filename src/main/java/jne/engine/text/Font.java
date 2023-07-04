@@ -155,7 +155,7 @@ public class Font implements IWrapper {
                 continue;
             }
             Glyph g = glyphs.get(c);
-            lineWidth -= g.width;
+            lineWidth += g.width;
         }
         width = Math.max(width, lineWidth);
         return width;
@@ -181,13 +181,17 @@ public class Font implements IWrapper {
         return height;
     }
 
-    public void drawText(CharSequence text, float x, float y, float z) {
-        int textHeight = getHeight(text);
+    public void drawText(CharSequence text, float x, float y, float z, boolean centered) {
+
+        int width = getWidth(text);
+        int height = getHeight(text);
 
         float drawX = x;
         float drawY = y;
-        if (textHeight > fontHeight) {
-            drawY += textHeight - fontHeight;
+
+        if (centered) {
+            drawX -= width / 2F;
+            drawY -= height / 2F;
         }
 
         texture.bind();
@@ -195,8 +199,13 @@ public class Font implements IWrapper {
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
             if (ch == '\n') {
-                drawY -= fontHeight;
+                drawY += fontHeight;
                 drawX = x;
+
+                if (centered) {
+                    drawX -= width / 2F;
+                }
+
                 continue;
             }
             if (ch == '\r') {
@@ -210,10 +219,10 @@ public class Font implements IWrapper {
         texture.unbind();
     }
 
-    public void drawText(CharSequence text, float x, float y, float z, Color color) {
-        RENDER.color(color);
-        drawText(text, x, y, z);
-        RENDER.clearColor();
+    public void drawText(CharSequence text, float x, float y, float z, Color color, boolean centered) {
+        RENDER.color(color, () -> {
+            drawText(text, x, y, z, centered);
+        });
     }
 
     public void dispose() {

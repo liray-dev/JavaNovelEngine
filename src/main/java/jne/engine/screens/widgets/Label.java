@@ -15,13 +15,14 @@ public class Label<SELF extends Label<SELF>> extends Component<SELF> {
     @Override
     public void onRender(float partialTicks) {
         if (text != null && !text.isEmpty()) {
-            Area center = this.area.getCenter();
-
-            float fontHeight = FONT.getHeight(text) / FONT.size * 2;
-            float fontWidth = FONT.getWidth(text) / FONT.size * 2;
 
             RENDER.scale(size, size, () -> {
-                FONT.drawText(text, (center.x - fontWidth) / size, (center.y) / size, area.z, color);
+                if (isCentered) {
+                    Area center = area.getCenter();
+                    FONT.drawText(text, (center.x) / size, (center.y) / size, area.z, color, true);
+                } else {
+                    FONT.drawText(text, (area.x) / size, (area.y) / size, area.z, color, false);
+                }
             });
         }
     }

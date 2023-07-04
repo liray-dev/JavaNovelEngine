@@ -5,7 +5,8 @@ import jne.engine.utils.*;
 
 public class Component<SELF extends Component<SELF>> implements IComponentsListener, IComponent, IWrapper {
 
-    protected Area area;
+    public int id;
+    public Area area;
 
     protected int mouseX, mouseY;
     protected int mouseOffsetX, mouseOffsetY;
@@ -15,6 +16,7 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     protected boolean focused;
 
     protected Component() {
+        this.id = -1;
         this.area = new Area();
         this.visible = true;
         this.active = false;
@@ -162,6 +164,11 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
         protected T create() {
             return (T) new Component();
+        }
+
+        public SELF id(int id) {
+            instance().id = id;
+            return self();
         }
 
         public SELF area(Area area) {

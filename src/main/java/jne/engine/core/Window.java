@@ -12,12 +12,19 @@ public class Window implements ICore {
 
     public final String TITLE = "JNE";
     public final ScreenManager screenManager = new ScreenManager();
+
+    public DisplayMode desktop;
+
     public boolean fullscreen;
-    public boolean resizable = false;
+    public boolean resizable = true;
     public boolean vSync = false;
 
     public int displayWidth;
     public int displayHeight;
+
+    public float scaleWidth;
+    public float scaleHeight;
+
     /**
      * A method to set the icon for the main window of the engine
      */
@@ -30,10 +37,12 @@ public class Window implements ICore {
      * It is not recommended to over-call this method!
      */
     public void initDisplayMode() throws LWJGLException {
+
+        desktop = Display.getDesktopDisplayMode();
+
         if (displayWidth == 0 || displayHeight == 0) {
-            DisplayMode displaymode = Display.getDesktopDisplayMode();
-            displayWidth = displaymode.getWidth() / 2;
-            displayHeight = displaymode.getHeight() / 2;
+            displayWidth = desktop.getWidth() / 2;
+            displayHeight = desktop.getHeight() / 2;
         }
 
         if (fullscreen) {
@@ -42,6 +51,7 @@ public class Window implements ICore {
         } else {
             Display.setDisplayMode(new DisplayMode(displayWidth, displayHeight));
         }
+        setDisplayResolution(displayWidth, displayHeight);
     }
 
     /**
@@ -62,10 +72,10 @@ public class Window implements ICore {
     /**
      * Update window method
      */
-    public void updateDisplay() {
+    public void updateDisplay() throws LWJGLException {
         Display.update();
         this.checkWindowResize();
-        setTitle(TITLE + " | SceneMaker | " + ENGINE.debugFPS);
+        setTitle(TITLE + ENGINE.debugFPS);
     }
 
     /**
@@ -109,7 +119,7 @@ public class Window implements ICore {
     /**
      * A method for checking if the resolution of the current window needs to be changed
      */
-    protected void checkWindowResize() {
+    protected void checkWindowResize() throws LWJGLException {
         if (!this.fullscreen && Display.wasResized()) {
             this.setDisplayResolution(Display.getWidth(), Display.getHeight());
         }
@@ -118,20 +128,38 @@ public class Window implements ICore {
     /**
      * Method for setting the current window resolution
      */
-    public void setDisplayResolution(int displayWidth, int displayHeight) {
+    public void setDisplayResolution(int displayWidth, int displayHeight) throws LWJGLException {
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
         this.screenManager.resize(displayWidth, displayHeight);
+        if (Display.isCreated()) {
+            this.changeOrtho();
+        }
+    }
+
+    private int calculateScale(int guiScale, boolean forceUnicodeFont) {
+        int i;
+        for(i = 1; i != guiScale && i < this.displayWidth && i < this.displayHeight && this.displayWidth / (i + 1) >= 320 && this.displayHeight / (i + 1) >= 240; ++i) {}
+        if (forceUnicodeFont && i % 2 != 0) {
+            ++i;
+        }
+
+        return i;
+    }
+
+    private void calculateScale() {
+        DisplayMode desktop = Display.getDesktopDisplayMode();
+        this.scaleWidth = (float) desktop.getWidth() / displayWidth;
+        this.scaleHeight = (float) desktop.getHeight() / displayHeight;
     }
 
     /**
      * The projection matrix setting method for the correct coordinate system, namely top left. as well as the Z coordinate threshold
      */
     public void changeOrtho() {
-        DisplayMode displaymode = Display.getDesktopDisplayMode();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0, displaymode.getWidth(), displaymode.getHeight(), 0, -1000, 1000);
+        GL11.glOrtho(0, displayWidth, displayHeight, 0, -1000, 1000);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 

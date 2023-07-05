@@ -1,6 +1,7 @@
 package jne.engine.events.utils;
 
 
+import jne.engine.constants.EventPriority;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

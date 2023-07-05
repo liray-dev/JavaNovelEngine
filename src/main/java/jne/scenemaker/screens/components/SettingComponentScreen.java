@@ -11,9 +11,9 @@ import jne.scenemaker.screens.main.SceneMakerScreen;
 
 import java.awt.*;
 
-public class AddComponentScreen extends ComponentsListener {
+public class SettingComponentScreen extends ComponentsListener {
 
-    private final int Z_LEVEL = 1;
+    private final int Z_LEVEL = 2;
 
     private final Color clickedToolColor = new Color(0x525252);
     private final Color toolColor = new Color(0x383838);
@@ -77,8 +77,6 @@ public class AddComponentScreen extends ComponentsListener {
                 .label(GRAPHICS.label().text("Sprite").centered(true).build(), true)
                 .build());
 
-        Area textbox = sprite.offset(-150, 5);
-        add(GRAPHICS.textbox().area(textbox).ghostText("Type the value").build());
     }
 
     @SubscribeEvent(priority = EventPriority.VERY_HIGH)

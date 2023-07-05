@@ -5,8 +5,8 @@ import jne.engine.events.types.ScreenEvent;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
 import jne.engine.utils.IWrapper;
-import jne.engine.utils.KeyboardType;
-import jne.engine.utils.MouseClickType;
+import jne.engine.constants.KeyboardType;
+import jne.engine.constants.MouseClickType;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -79,8 +79,8 @@ public class ScreenManager implements IWrapper {
      * A method that handles every millisecond of engine update
      */
     public void tick() {
-        input();
         new ScreenEvent.Tick().post();
+        input();
     }
 
     /**

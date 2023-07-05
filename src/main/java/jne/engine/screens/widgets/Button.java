@@ -2,7 +2,7 @@ package jne.engine.screens.widgets;
 
 import jne.engine.utils.IPressable;
 import jne.engine.utils.ITooltip;
-import jne.engine.utils.MouseClickType;
+import jne.engine.constants.MouseClickType;
 
 public class Button<SELF extends Button<SELF>> extends TexturedComponent<SELF> {
 

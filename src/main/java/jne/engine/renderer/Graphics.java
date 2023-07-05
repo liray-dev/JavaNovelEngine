@@ -2,6 +2,7 @@ package jne.engine.renderer;
 
 import jne.engine.screens.widgets.Button;
 import jne.engine.screens.widgets.Label;
+import jne.engine.screens.widgets.TextBox;
 import jne.engine.screens.widgets.TexturedComponent;
 
 public class Graphics {
@@ -22,6 +23,10 @@ public class Graphics {
 
     public TexturedComponent.Builder<? extends TexturedComponent.Builder<?, ?>, ? extends TexturedComponent<?>> texture() {
         return new TexturedComponent.Builder<>();
+    }
+
+    public TextBox.Builder<? extends TextBox.Builder<?, ?>, ? extends TextBox<?>> textbox() {
+        return new TextBox.Builder<>();
     }
 
 }

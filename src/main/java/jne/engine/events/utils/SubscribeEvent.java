@@ -1,6 +1,6 @@
 package jne.engine.events.utils;
 
-import jne.engine.events.types.Event;
+import jne.engine.constants.EventPriority;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

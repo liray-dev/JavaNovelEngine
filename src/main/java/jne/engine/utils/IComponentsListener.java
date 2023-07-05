@@ -1,5 +1,7 @@
 package jne.engine.utils;
 
+import jne.engine.constants.KeyboardType;
+
 public interface IComponentsListener {
 
     void render(float partialTicks);
@@ -12,7 +14,7 @@ public interface IComponentsListener {
 
     void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick);
 
-    void keyTyped(char typedChar, int keyCode);
+    void keyTyped(char typedChar, int keyCode, KeyboardType type);
 
     void tick();
 

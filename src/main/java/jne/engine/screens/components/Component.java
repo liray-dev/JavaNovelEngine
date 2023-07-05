@@ -1,12 +1,18 @@
 package jne.engine.screens.components;
 
 
+import jne.engine.constants.EnumScriptType;
+import jne.engine.constants.KeyboardType;
+import jne.engine.constants.MouseClickType;
+import jne.engine.events.types.ScriptEvent;
+import jne.engine.scripts.ScriptContainer;
 import jne.engine.utils.*;
 
 public class Component<SELF extends Component<SELF>> implements IComponentsListener, IComponent, IWrapper {
 
     public int id;
     public Area area;
+    public ScriptContainer scriptContainer;
 
     protected int mouseX, mouseY;
     protected int mouseOffsetX, mouseOffsetY;
@@ -15,35 +21,45 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     protected boolean visible;
     protected boolean focused;
 
+    protected boolean isTooltip = false;
+    protected int ticks = 0;
+
     protected Component() {
         this.id = -1;
         this.area = new Area();
+        this.scriptContainer = new ScriptContainer();
         this.visible = true;
         this.active = false;
         this.focused = false;
+
     }
 
     /*
         Interface realization
      */
 
-    public boolean checkFocus(float mouseX, float mouseY) {
+    final public boolean checkFocus(float mouseX, float mouseY) {
         return area.onArea(mouseX, mouseY);
     }
 
     @Override
-    public void render(float partialTicks) {
+    final public void render(float partialTicks) {
         if (this.visible) {
             onRender(partialTicks);
         }
     }
 
     @Override
-    public void mouseMove(int mouseX, int mouseY) {
+    final public void mouseMove(int mouseX, int mouseY) {
         if (this.visible) {
             this.focused = checkFocus(mouseX, mouseY);
             if (this.focused) {
                 onFocused(mouseX, mouseY);
+                if (isTooltip) {
+                    ScriptEvent.Tooltip tooltip = new ScriptEvent.Tooltip(this);
+                    scriptContainer.run(EnumScriptType.TOOLTIP, tooltip);
+                    tooltip.post();
+                }
             }
         }
 
@@ -52,7 +68,7 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    final public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (this.visible) {
             boolean focused = checkFocus(mouseX, mouseY);
             if (focused) {
@@ -60,15 +76,23 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
                 this.mouseOffsetX = (int) (mouseX - this.area.x);
                 this.mouseOffsetY = (int) (mouseY - this.area.y);
                 onClicked(mouseX, mouseY, mouseButton, MouseClickType.CLICKED);
+
+                ScriptEvent.Press press = new ScriptEvent.Press(this);
+                scriptContainer.run(EnumScriptType.PRESS, press);
+                press.post();
             } else {
                 this.active = false;
                 onFailClick(mouseX, mouseY, mouseButton, MouseClickType.CLICKED);
+
+                ScriptEvent.FailPress failPress = new ScriptEvent.FailPress(this);
+                scriptContainer.run(EnumScriptType.FAIL_PRESS, failPress);
+                failPress.post();
             }
         }
     }
 
     @Override
-    public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+    final public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
         if (this.visible) {
             boolean focused = checkFocus(mouseX, mouseY);
             if (focused) {
@@ -96,20 +120,51 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     }
 
     @Override
-    final public void keyTyped(char typedChar, int keyCode) {
+    final public void keyTyped(char typedChar, int keyCode, KeyboardType type) {
         if (this.visible && this.active) {
-            onKeyTyped(keyCode, typedChar, KeyboardType.START);
+            onKeyTyped(keyCode, typedChar, type);
         }
+    }
+
+    @Override
+    final public void tick() {
+        ticks++;
+        if (ticks > 20) {
+            ticks = 0;
+        }
+        if (focused) {
+            if (ticks == 20) {
+                isTooltip = true;
+            }
+        } else {
+            isTooltip = false;
+        }
+
+        ScriptEvent.Update update = new ScriptEvent.Update(this);
+        scriptContainer.run(EnumScriptType.UPDATE, update);
+        update.post();
+
+        onTick();
+    }
+
+    @Override
+    final public void setVisibility(boolean visibility) {
+        this.visible = visibility;
+    }
+
+    @Override
+    final public void setArea(Area area) {
+        this.area = area;
+    }
+
+    @Override
+    final public Area getArea() {
+        return this.area;
     }
 
     /*
         Overwrite realization
      */
-
-    @Override
-    public void tick() {
-
-    }
 
     @Override
     public void onRender(float partialTicks) {
@@ -142,18 +197,8 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     }
 
     @Override
-    public void setVisibility(boolean visibility) {
-        this.visible = visibility;
-    }
+    public void onTick() {
 
-    @Override
-    public void setArea(Area area) {
-        this.area = area;
-    }
-
-    @Override
-    public Area getArea() {
-        return this.area;
     }
 
     protected SELF self() {
@@ -173,6 +218,16 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
         public SELF area(Area area) {
             instance().area = area;
+            return self();
+        }
+
+        public SELF script(String code) {
+            instance().scriptContainer.script = code;
+            return self();
+        }
+
+        public SELF scriptContainer(ScriptContainer container) {
+            instance().scriptContainer = container;
             return self();
         }
 

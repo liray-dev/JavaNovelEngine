@@ -1,5 +1,7 @@
 package jne.engine.utils;
 
+import jne.engine.constants.KeyboardType;
+import jne.engine.constants.MouseClickType;
 import jne.engine.screens.components.Area;
 
 public interface IComponent {
@@ -15,6 +17,8 @@ public interface IComponent {
     void onMoveClick(int mouseX, int mouseY, int mouseButton, long lastClickTime);
 
     void onKeyTyped(int keyCode, char typedChar, KeyboardType type);
+
+    void onTick();
 
     void setVisibility(boolean visibility);
 

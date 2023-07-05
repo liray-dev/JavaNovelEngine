@@ -55,17 +55,17 @@ public class Area {
     public Area offset(float offsetX, float offsetY) {
         float x = this.x2 + offsetX;
         float y = this.y2 + offsetY;
-        return new Area(x, y, this.width, this.height, this.z);
+        return new Area(x, y, this.z, this.width, this.height);
     }
 
     public Area offset(float offsetX, float offsetY, float offsetWidth, float offsetHeight) {
         float x = this.x2 + offsetX;
         float y = this.y2 + offsetY;
-        return new Area(x, y, offsetWidth, offsetHeight, this.z);
+        return new Area(x, y, this.z, offsetWidth, offsetHeight);
     }
 
     public Area getCenter() {
-        return new Area(this.x + (this.width / 2), this.y + (height / 2), this.x2, this.y2, this.z);
+        return new Area(this.x + (this.width / 2), this.y + (height / 2), this.z, this.x2, this.y2);
     }
 
     public boolean onArea(float mouseX, float mouseY) {

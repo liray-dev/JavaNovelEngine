@@ -1,6 +1,9 @@
 package jne.engine.screens.listeners;
 
+import jne.engine.constants.EnumScriptType;
+import jne.engine.constants.KeyboardType;
 import jne.engine.events.types.ScreenEvent;
+import jne.engine.events.types.ScriptEvent;
 import jne.engine.screens.components.Component;
 import jne.engine.utils.IComponentsListener;
 import jne.engine.utils.IWrapper;
@@ -53,8 +56,8 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
     }
 
     @Override
-    final public void keyTyped(char typedChar, int keyCode) {
-        getComponents().forEach(it -> it.keyTyped(typedChar, keyCode));
+    final public void keyTyped(char typedChar, int keyCode, KeyboardType type) {
+        getComponents().forEach(it -> it.keyTyped(typedChar, keyCode, type));
     }
 
     @Override
@@ -96,10 +99,15 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
 
     final public <T extends Component> void add(T component) {
         components.add(component);
+
+        ScriptEvent.Init init = new ScriptEvent.Init(component);
+        component.scriptContainer.run(EnumScriptType.INIT, init);
+        init.post();
     }
 
     final public <T extends Component> void remove(T component) {
         components.remove(component);
+
     }
 
     final public List<Component> getComponents() {

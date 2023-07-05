@@ -2,6 +2,7 @@ package jne.engine.core;
 
 import jne.engine.events.types.TextureRegistryEvent;
 import jne.engine.screens.listeners.ComponentsListener;
+import jne.engine.scripts.ScriptController;
 import jne.engine.text.Font;
 import jne.engine.texture.TextureContainer;
 import jne.engine.utils.*;
@@ -17,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.List;
 
 import static jne.engine.utils.Util.getSystemTime;
@@ -28,6 +30,7 @@ public class JNE implements ICore {
 
     private final Timer timer = new Timer(20.0F, 0L);
     public final Settings settings = new Settings();
+    private ScriptController scriptcontroller;
     public final File launcherDir;
     public final File assetsDir;
     public Font font;
@@ -85,8 +88,8 @@ public class JNE implements ICore {
         WINDOW.setIcon();
         WINDOW.initDisplayMode();
         WINDOW.createDisplay();
-        this.font = new Font(new FileInputStream(new ResourceLocation("PressStart2P-Regular.ttf").getFile()), 16, true, java.awt.Font.BOLD);
-
+        this.scriptcontroller = new ScriptController();
+        this.font = new Font(Files.newInputStream(new ResourceLocation("PressStart2P-Regular.ttf").getFile().toPath()), 16, true, java.awt.Font.PLAIN);
         List<Class<?>> classes = ClassScanner.scanClassesWithAnnotation(Novel.class);
 
         for (Class<?> clazz : classes) {

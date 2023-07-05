@@ -20,12 +20,13 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
     @Override
     public void onRender(float partialTicks) {
         super.onRender(partialTicks);
-        if (texture != null && !area.isEmpty()) {
-
-            RENDER.matrix(() -> {
-                RENDER.color(color, () -> {
-                    RENDER.drawTexturedQuad(area.x , area.y, area.z, area.x2, area.y2, texture);
-                });
+        if (!area.isEmpty()) {
+            RENDER.color(color, () -> {
+                if (texture != null) {
+                    RENDER.drawTexturedQuad(area.x, area.y, area.z, area.x2, area.y2, texture);
+                } else {
+                    RENDER.drawQuad(area.x, area.y, area.z, area.x2, area.y2);
+                }
             });
         }
     }

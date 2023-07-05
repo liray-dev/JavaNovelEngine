@@ -15,7 +15,7 @@ public class Label<SELF extends Label<SELF>> extends Component<SELF> {
     @Override
     public void onRender(float partialTicks) {
         if (text != null && !text.isEmpty()) {
-
+            RENDER.push();
             RENDER.scale(size, size, () -> {
                 if (isCentered) {
                     Area center = area.getCenter();
@@ -24,6 +24,7 @@ public class Label<SELF extends Label<SELF>> extends Component<SELF> {
                     FONT.drawText(text, (area.x) / size, (area.y) / size, area.z, color, false);
                 }
             });
+            RENDER.pop();
         }
     }
 

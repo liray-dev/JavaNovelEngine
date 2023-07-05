@@ -1,4 +1,4 @@
-package jne.engine.utils;
+package jne.engine.constants;
 
 public enum MouseClickType {
 

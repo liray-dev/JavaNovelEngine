@@ -16,6 +16,27 @@ import java.util.function.LongSupplier;
 
 public class Util {
 
+    public static int offsetByCodepoints(String text, int cursorPos, int moveTo) {
+        int i
+                = text.length();
+        if (moveTo >= 0) {
+            for(int j = 0; cursorPos < i && j < moveTo; ++j) {
+                if (Character.isHighSurrogate(text.charAt(cursorPos++)) && cursorPos < i && Character.isLowSurrogate(text.charAt(cursorPos))) {
+                    ++cursorPos;
+                }
+            }
+        } else {
+            for(int k = moveTo; cursorPos > 0 && k < 0; ++k) {
+                --cursorPos;
+                if (Character.isLowSurrogate(text.charAt(cursorPos)) && cursorPos > 0 && Character.isHighSurrogate(text.charAt(cursorPos - 1))) {
+                    --cursorPos;
+                }
+            }
+        }
+
+        return cursorPos;
+    }
+
     public static String readText(File file) throws FileNotFoundException {
         return readText(new FileInputStream(file));
     }

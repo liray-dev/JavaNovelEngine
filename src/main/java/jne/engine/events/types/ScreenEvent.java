@@ -1,8 +1,8 @@
 package jne.engine.events.types;
 
 import jne.engine.screens.listeners.ComponentsListener;
-import jne.engine.utils.KeyboardType;
-import jne.engine.utils.MouseClickType;
+import jne.engine.constants.KeyboardType;
+import jne.engine.constants.MouseClickType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,10 +1,10 @@
 package jne.scenemaker.screens.main;
 
 import jne.engine.events.types.ScreenEvent;
-import jne.engine.events.utils.EventPriority;
+import jne.engine.constants.EventPriority;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.listeners.ComponentsListener;
-import jne.engine.utils.MouseClickType;
+import jne.engine.constants.MouseClickType;
 
 import java.awt.*;
 
@@ -48,7 +48,7 @@ public class ScaledAreaScreen extends ComponentsListener {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void keyboard(ScreenEvent.Keyboard event) {
-        this.keyTyped(event.getCharacter(), event.getButton());
+        this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

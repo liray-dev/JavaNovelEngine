@@ -1,13 +1,13 @@
 package jne.scenemaker.screens.main;
 
 import jne.engine.events.types.ScreenEvent;
-import jne.engine.events.utils.EventPriority;
+import jne.engine.constants.EventPriority;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.engine.texture.TextureContainer;
-import jne.engine.utils.MouseClickType;
+import jne.engine.constants.MouseClickType;
 import jne.scenemaker.screens.components.AddComponentScreen;
 import jne.scenemaker.utils.EditingTypes;
 
@@ -117,7 +117,7 @@ public class SceneMakerScreen extends ComponentsListener {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void keyboard(ScreenEvent.Keyboard event) {
-        this.keyTyped(event.getCharacter(), event.getButton());
+        this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

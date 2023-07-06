@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class ComponentsListener implements IComponentsListener, IWrapper {
 
+    public boolean isInit = false;
     public int width;
     public int height;
 
@@ -72,8 +73,10 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
     }
 
     final public void recreate() {
-        components.clear();
-        init();
+        if (!isInit) {
+            components.clear();
+            init();
+        }
         update();
     }
 

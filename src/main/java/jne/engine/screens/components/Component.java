@@ -211,6 +211,7 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             return (T) new Component();
         }
 
+        @ComponentConstructor(text = "ID", example = "example: 1")
         public SELF id(int id) {
             instance().id = id;
             return self();

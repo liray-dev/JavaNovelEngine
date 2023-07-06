@@ -2,6 +2,7 @@ package jne.engine.screens.widgets;
 
 import jne.engine.constants.KeyboardType;
 import jne.engine.screens.components.Component;
+import jne.engine.screens.components.ComponentConstructor;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -11,9 +12,10 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
     public Color textColor = new Color(0xFFFFFF);
     public Color ghostColor = new Color(0x969696);
     public Color barColor = new Color(0x383838);
-    public int cursorPosition = 0;
+    public int cursorPositionX = 0;
     public String text = "";
     public String ghostText = "";
+    public float size = 1F;
 
     @Override
     public void onRender(float partialTicks) {
@@ -23,18 +25,19 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
         if (text != null && !text.isEmpty()) {
             float x = (area.x + FONT.getWidth(text.substring(0, 1)) / 2);
             float y = (area.y + (area.height - FONT.getHeight(text)) / 2);
-            FONT.drawText(text, x, y, area.z, textColor, false);
+            FONT.drawText(text, x, y, area.z, textColor, false, size);
 
             if (active && ticks >= 10) {
-                FONT.drawText("|", (x + (cursorPosition * (FONT.getWidth(text) / text.length())) - (FONT.size / 2)), y, area.z, new Color(0x9D9D9D), false);
+                int length = text.substring(0, cursorPositionX).length();
+                String spaceString = new String(new char[length]).replace('\0', ' ');
+                FONT.drawText(spaceString + "|", x - FONT.getWidth(text.substring(0, 1)) / (2 / size), y, area.z, new Color(0x809D9D9D, true), false, size);
             }
         } else {
             if (ghostText != null && !ghostText.isEmpty()) {
                 float y = (area.y + (area.height - FONT.getHeight(ghostText)) / 2);
-                FONT.drawText(ghostText, (area.x), y, area.z, ghostColor, false);
+                FONT.drawText(ghostText, area.x, y, area.z, ghostColor, false, size);
             }
         }
-
     }
 
     @Override
@@ -43,36 +46,36 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
             return;
         }
 
+        if (keyCode == Keyboard.KEY_ESCAPE || keyCode == Keyboard.KEY_RETURN) {
+            active = false;
+            return;
+        }
+
         if (keyCode == Keyboard.KEY_BACK) {
-            if (cursorPosition > 0) {
-                text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
-                cursorPosition--;
+            if (cursorPositionX > 0) {
+                text = text.substring(0, cursorPositionX - 1) + text.substring(cursorPositionX);
+                cursorPositionX--;
             }
             return;
         }
 
         if (keyCode == Keyboard.KEY_RIGHT) {
-            if (cursorPosition < text.length()) {
-                cursorPosition++;
+            if (cursorPositionX < text.length()) {
+                cursorPositionX++;
             }
             return;
         }
         if (keyCode == Keyboard.KEY_LEFT) {
-            if (cursorPosition > 0) {
-                cursorPosition--;
+            if (cursorPositionX > 0) {
+                cursorPositionX--;
             }
             return;
         }
 
-        if (typedChar != '\0') {
-            text = text.substring(0, cursorPosition) + typedChar + text.substring(cursorPosition);
-            cursorPosition++;
+        if (typedChar != '\0' && typedChar != '\u0001' && typedChar != '\t') {
+            text = text.substring(0, cursorPositionX) + typedChar + text.substring(cursorPositionX);
+            cursorPositionX++;
         }
-    }
-
-    @Override
-    public void onTick() {
-
     }
 
     protected SELF self() {
@@ -86,13 +89,21 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
             return (T) new TextBox();
         }
 
+        @ComponentConstructor(text = "Text", example = "example: message")
         public SELF text(String text) {
             instance().text = text;
             return self();
         }
 
+        @ComponentConstructor(text = "Ghost Text", example = "example: 'example: ...'")
         public SELF ghostText(String text) {
             instance().ghostText = text;
+            return self();
+        }
+
+        @ComponentConstructor(text = "Text Size", example = "example: 1.0")
+        public SELF size(float size) {
+            instance().size = size;
             return self();
         }
 

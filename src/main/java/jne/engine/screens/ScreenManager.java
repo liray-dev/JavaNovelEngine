@@ -102,8 +102,6 @@ public class ScreenManager implements IWrapper {
 
         EventListenerHelper.register(screen);
         this.currentScreen = screen;
-        this.currentScreen.resize(width, height);
-        this.currentScreen.init();
         this.resize(WINDOW.displayWidth, WINDOW.displayHeight);
     }
 
@@ -113,7 +111,6 @@ public class ScreenManager implements IWrapper {
         } else {
             EventListenerHelper.register(subScreen);
             this.subScreens.add(subScreen);
-            subScreen.init();
             subScreen.resize(width, height);
         }
     }

@@ -24,7 +24,7 @@ public abstract class ComponentBuilder<SELF extends ComponentBuilder<?, T>, T ex
 
     private final T instance;
 
-    protected SELF self() {
+    public SELF self() {
         return (SELF) this;
     }
 

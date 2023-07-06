@@ -16,6 +16,23 @@ import java.util.function.LongSupplier;
 
 public class Util {
 
+    public static <T> Object convert(String text, Class<T> targetType) {
+        if (text.isEmpty()) return "";
+        if (targetType == int.class) {
+            return Integer.parseInt(text);
+        } else if (targetType == float.class) {
+            return Float.parseFloat(text);
+        } else if (targetType == double.class) {
+            return Double.parseDouble(text);
+        } else if (targetType == boolean.class) {
+            return Boolean.parseBoolean(text);
+        } else if (targetType == String.class) {
+            return text;
+        } else {
+            throw new IllegalArgumentException("Unsupported target type: " + targetType.getName());
+        }
+    }
+
     public static int offsetByCodepoints(String text, int cursorPos, int moveTo) {
         int i
                 = text.length();

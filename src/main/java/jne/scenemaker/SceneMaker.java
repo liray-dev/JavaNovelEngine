@@ -19,6 +19,8 @@ public class SceneMaker implements IWrapper {
     public static Texture zoom;
     public static Texture add;
     public static Texture exit;
+    public static Texture trueIcon;
+    public static Texture falseIcon;
 
     public SceneMaker() {
         EventListenerHelper.register(this);
@@ -35,6 +37,8 @@ public class SceneMaker implements IWrapper {
         zoom = container.register(new ResourceLocation("scenemaker/zoom.png"));
         add = container.register(new ResourceLocation("scenemaker/add.png"));
         exit = container.register(new ResourceLocation("scenemaker/exit.png"));
+        trueIcon = container.register(new ResourceLocation("scenemaker/true.png"));
+        falseIcon = container.register(new ResourceLocation("scenemaker/false.png"));
 
 
     }

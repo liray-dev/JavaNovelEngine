@@ -1,7 +1,9 @@
 package jne.engine.screens.widgets;
 
 import jne.engine.screens.components.Component;
+import jne.engine.screens.components.ComponentConstructor;
 import jne.engine.texture.Texture;
+import jne.engine.texture.TextureContainer;
 
 import java.awt.*;
 
@@ -19,7 +21,6 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
 
     @Override
     public void onRender(float partialTicks) {
-        super.onRender(partialTicks);
         if (!area.isEmpty()) {
             RENDER.color(color, () -> {
                 if (texture != null) {
@@ -47,8 +48,20 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
             return self();
         }
 
+        @ComponentConstructor(text = "Texture", example = "example: image without '.png'")
+        public SELF texture(String texture) {
+            instance().texture = TextureContainer.get(texture);
+            return self();
+        }
+
         public SELF color(Color color) {
             instance().color = color;
+            return self();
+        }
+
+        @ComponentConstructor(text = "Color", example = "example: RGB")
+        public SELF color(int color) {
+            instance().color = new Color(color);
             return self();
         }
 

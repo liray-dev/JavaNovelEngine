@@ -1,12 +1,13 @@
 package jne.scenemaker.screens.components;
 
-import jne.engine.events.types.ScreenEvent;
 import jne.engine.constants.EventPriority;
+import jne.engine.constants.MouseClickType;
+import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
+import jne.engine.screens.components.ComponentBuilderHelper;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
-import jne.engine.constants.MouseClickType;
 import jne.scenemaker.screens.main.SceneMakerScreen;
 
 import java.awt.*;
@@ -15,7 +16,6 @@ public class AddComponentScreen extends ComponentsListener {
 
     private final int Z_LEVEL = 1;
 
-    private final Color clickedToolColor = new Color(0x525252);
     private final Color toolColor = new Color(0x383838);
     private final Color barColor = new Color(0x181818);
 
@@ -33,8 +33,13 @@ public class AddComponentScreen extends ComponentsListener {
                 .area(new Area(area.x2 - 55, area.y + 5, Z_LEVEL, 50, 50))
                 .texture(TextureContainer.get("exit"))
                 .color(toolColor)
-                .onPress((component, type) -> {if (type == MouseClickType.CLICKED) { kill();}})
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        kill();
+                    }
+                })
                 .build());
+
 
         add(GRAPHICS.label()
                 .area(new Area(area.x + 10, area.y + 5, area.z, 1, 1))
@@ -48,6 +53,12 @@ public class AddComponentScreen extends ComponentsListener {
                 .area(button)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Button").centered(true).build(), true)
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        ComponentBuilderHelper builder = new ComponentBuilderHelper(GRAPHICS.button().self());
+                        openSubscreen(new SettingComponentScreen(builder, this.area));
+                    }
+                })
                 .build());
 
         Area label = button.offset(-150, 5);
@@ -57,6 +68,12 @@ public class AddComponentScreen extends ComponentsListener {
                 .area(label)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Label").centered(true).build(), true)
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        ComponentBuilderHelper builder = new ComponentBuilderHelper(GRAPHICS.label().self());
+                        openSubscreen(new SettingComponentScreen(builder, this.area));
+                    }
+                })
                 .build());
 
         Area texture = label.offset(-150, 5);
@@ -66,19 +83,13 @@ public class AddComponentScreen extends ComponentsListener {
                 .area(texture)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Texture").centered(true).build(), true)
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        ComponentBuilderHelper builder = new ComponentBuilderHelper(GRAPHICS.texture().self());
+                        openSubscreen(new SettingComponentScreen(builder, this.area));
+                    }
+                })
                 .build());
-
-        Area sprite = texture.offset(-150, 5);
-
-        add(GRAPHICS.button()
-                .id(3)
-                .area(sprite)
-                .color(toolColor)
-                .label(GRAPHICS.label().text("Sprite").centered(true).build(), true)
-                .build());
-
-        Area textbox = sprite.offset(-150, 5);
-        add(GRAPHICS.textbox().area(textbox).ghostText("Type the value").build());
     }
 
     @SubscribeEvent(priority = EventPriority.VERY_HIGH)
@@ -125,6 +136,16 @@ public class AddComponentScreen extends ComponentsListener {
     @SubscribeEvent(priority = EventPriority.VERY_HIGH)
     public void tick(ScreenEvent.Tick event) {
         this.tick();
+    }
+
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public void onCloseSubScreen(ScreenEvent.Close event) {
+        if (event.getScreen().getClass().equals(SettingComponentScreen.class)) {
+            SettingComponentScreen screen = (SettingComponentScreen) event.getScreen();
+
+
+
+        }
     }
 
 }

@@ -1,9 +1,7 @@
 package jne.engine.renderer;
 
-import jne.engine.screens.widgets.Button;
-import jne.engine.screens.widgets.Label;
-import jne.engine.screens.widgets.TextBox;
-import jne.engine.screens.widgets.TexturedComponent;
+import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.*;
 
 public class Graphics {
 
@@ -25,8 +23,20 @@ public class Graphics {
         return new TexturedComponent.Builder<>();
     }
 
+    public CheckBox.Builder<? extends CheckBox.Builder<?, ?>, ? extends CheckBox<?>> checkbox() {
+        return new CheckBox.Builder<>();
+    }
+
     public TextBox.Builder<? extends TextBox.Builder<?, ?>, ? extends TextBox<?>> textbox() {
         return new TextBox.Builder<>();
+    }
+
+    public <T extends Component.Builder<T, E>, E extends Component<E>> T getBuilder(Class<T> builderClass) {
+        try {
+            return builderClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

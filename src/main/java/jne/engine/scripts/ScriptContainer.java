@@ -32,7 +32,7 @@ public class ScriptContainer {
         this.script = "";
         this.console = new TreeMap<>();
         this.errored = false;
-        this.engine = ScriptController.instance.getEngineByName("ecmascript");
+        //this.engine = ScriptController.instance.getEngineByName("ecmascript");
         this.init = false;
     }
 

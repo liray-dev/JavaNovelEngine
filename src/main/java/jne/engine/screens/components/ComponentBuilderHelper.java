@@ -1,7 +1,5 @@
 package jne.engine.screens.components;
 
-import jne.engine.renderer.Graphics;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 

@@ -1,5 +1,6 @@
 package jne.engine.core;
 
+import jne.engine.errors.ErrorManager;
 import jne.engine.events.types.TextureRegistryEvent;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.scripts.ScriptController;
@@ -62,8 +63,8 @@ public class JNE implements ICore {
 
         try {
             this.init();
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (Exception e) {
+            ErrorManager.error(e);
         }
 
         WINDOW.changeOrtho();
@@ -72,8 +73,8 @@ public class JNE implements ICore {
                 while (this.running) {
                     this.loop();
                 }
-            } catch (Exception exception) {
-                exception.printStackTrace();
+            } catch (Exception e) {
+                ErrorManager.error(e);
             } finally {
                 this.shutdown();
             }
@@ -88,6 +89,7 @@ public class JNE implements ICore {
         WINDOW.setIcon();
         WINDOW.initDisplayMode();
         WINDOW.createDisplay();
+        Discord.launch();
         this.scriptcontroller = new ScriptController();
         this.font = new Font(Files.newInputStream(new ResourceLocation("PressStart2P-Regular.ttf").getFile().toPath()), 16, true, java.awt.Font.PLAIN);
         List<Class<?>> classes = ClassScanner.scanClassesWithAnnotation(Novel.class);
@@ -150,6 +152,7 @@ public class JNE implements ICore {
 
         WINDOW.screenManager.render(this.timer.partialTick);
 
+        ErrorManager.render();
         GL11.glDisable(GL11.GL_BLEND);
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);

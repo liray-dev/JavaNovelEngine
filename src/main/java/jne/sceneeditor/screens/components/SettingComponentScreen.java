@@ -1,7 +1,8 @@
-package jne.scenemaker.screens.components;
+package jne.sceneeditor.screens.components;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
+import jne.engine.errors.ErrorManager;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
@@ -13,29 +14,73 @@ import jne.engine.screens.widgets.CheckBox;
 import jne.engine.screens.widgets.TextBox;
 import jne.engine.texture.TextureContainer;
 import jne.engine.utils.Util;
-import jne.scenemaker.screens.main.SceneMakerScreen;
+import jne.sceneeditor.screens.SceneEditorScreen;
 
 import java.awt.*;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class SettingComponentScreen extends ComponentsListener {
 
-    private final int Z_LEVEL = 2;
-
-
-    public Component component;
-
-    public final HashMap<MethodConstructor, Component> builderComponents = new HashMap<>();
-    private final Color toolColor = new Color(0x383838);
-    private final Color barColor = new Color(0x181818);
-    private final ComponentBuilderHelper builderHelper;
-    private final Area area;
+    public boolean init = false;
+    protected final int Z_LEVEL = 30;
+    protected final HashMap<MethodConstructor, Component> builderComponents = new HashMap<>();
+    protected boolean errored = false;
+    protected final Color toolColor = new Color(0x383838);
+    protected final Color barColor = new Color(0x181818);
+    protected final ComponentBuilderHelper builderHelper;
+    protected final Area area;
 
     public SettingComponentScreen(ComponentBuilderHelper builderHelper, Area area) {
         this.builderHelper = builderHelper;
         this.area = area;
+    }
+
+    public void collect() {
+
+    }
+
+    public boolean build(Class<? extends Component.Builder> clazz, Component.Builder<? extends Component.Builder<?, ?>, ? extends Component<?>> builder) {
+        try {
+            Set<Map.Entry<MethodConstructor, Component>> entries = builderComponents.entrySet();
+
+            for (Map.Entry<MethodConstructor, Component> entry : entries) {
+                Component value = entry.getValue();
+                MethodConstructor key = entry.getKey();
+
+                if (key.getTypes().length > 1) {
+                    System.out.println(value.getClass().getName() + " does not know how to handle multiple arguments");
+                    continue;
+                }
+
+                Method method = clazz.getMethod(key.getMethod().getName(), key.getTypes());
+                method.setAccessible(true);
+                if (value instanceof TextBox) {
+                    String text = ((TextBox<?>) value).text;
+                    try {
+                        method.invoke(builder, Util.convert(text, key.getTypes()[0]));
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Can't find the argument in the parameter " + key.getInfoText());
+                    }
+                } else if (value instanceof CheckBox) {
+                    boolean flag = ((CheckBox) value).flag;
+                    try {
+                        method.invoke(builder, flag);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Checkbox was broken, very strange " + key.getInfoText());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            errored = true;
+            ErrorManager.error(e);
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -74,6 +119,9 @@ public class SettingComponentScreen extends ComponentsListener {
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         collect();
+                        if (!errored) {
+                            kill();
+                        }
                     }
                 })
                 .build());
@@ -84,9 +132,7 @@ public class SettingComponentScreen extends ComponentsListener {
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Scripting").centered(true).build(), true)
                 .onPress((component, type) -> {
-                    if (type == MouseClickType.CLICKED) {
-                        collect();
-                    }
+
                 })
                 .build());
 
@@ -113,43 +159,6 @@ public class SettingComponentScreen extends ComponentsListener {
         }
     }
 
-    public void collect() {
-        Component.Builder builder = builderHelper.builder;
-
-        Class<? extends Component.Builder> clazz = builder.getClass();
-
-        try {
-            Set<Map.Entry<MethodConstructor, Component>> entries = builderComponents.entrySet();
-
-            for (Map.Entry<MethodConstructor, Component> entry : entries) {
-                Component value = entry.getValue();
-                MethodConstructor key = entry.getKey();
-
-                if (key.getTypes().length > 1) {
-                    System.out.println(value.getClass().getName() + " does not know how to handle multiple arguments");
-                    continue;
-                }
-
-                Method method = clazz.getMethod(key.getMethod().getName(), key.getTypes());
-                method.setAccessible(true);
-                if (value instanceof TextBox) {
-                    String text = ((TextBox<?>) value).text;
-                    method.invoke(builder, Util.convert(text, key.getTypes()[0]));
-                } else if (value instanceof CheckBox) {
-                    boolean flag = ((CheckBox) value).flag;
-                    method.invoke(builder, flag);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        this.component = (Component) builder.build();
-        Area center = this.area.getCenter();
-        this.component.setArea(new Area(center.x - 100, center.y - 100, Z_LEVEL, 200, 200));
-        add(this.component);
-    }
-
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void render(ScreenEvent.Render event) {
         float partialTick = event.getPartialTick();
@@ -165,12 +174,12 @@ public class SettingComponentScreen extends ComponentsListener {
         render(partialTick);
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneMakerScreen.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditorScreen.class, AddComponentScreen.class})
     public void move(ScreenEvent.MouseMove event) {
         this.mouseMove(event.getMouseX(), event.getMouseY());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneMakerScreen.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditorScreen.class, AddComponentScreen.class})
     public void input(ScreenEvent.MouseInput event) {
         MouseClickType type = event.getType();
         if (type == MouseClickType.CLICKED) {
@@ -181,17 +190,12 @@ public class SettingComponentScreen extends ComponentsListener {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneMakerScreen.class, AddComponentScreen.class})
-    public void clickMove(ScreenEvent.MouseClickMove event) {
-        this.mouseClickMove(event.getMouseX(), event.getMouseY(), event.getButton(), event.getLast());
-    }
-
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneMakerScreen.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditorScreen.class, AddComponentScreen.class})
     public void keyboard(ScreenEvent.Keyboard event) {
         this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneMakerScreen.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void tick(ScreenEvent.Tick event) {
         this.tick();
     }

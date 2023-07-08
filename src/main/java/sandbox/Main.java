@@ -1,5 +1,7 @@
 package sandbox;
 
+import jne.engine.errors.ErrorManager;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -28,7 +30,7 @@ public class Main {
             // Выполняем JavaScript-код
             engine.eval("var message = 'Hello, Nashorn!'; print(message);");
         } catch (ScriptException e) {
-            e.printStackTrace();
+            ErrorManager.error(e);
         }
     }
 
@@ -38,7 +40,7 @@ public class Main {
             URI uri = new URI(url);
             desktop.browse(uri);
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorManager.error(e);
         }
     }
 

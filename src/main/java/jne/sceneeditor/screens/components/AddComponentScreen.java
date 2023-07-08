@@ -1,20 +1,22 @@
-package jne.scenemaker.screens.components;
+package jne.sceneeditor.screens.components;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.ComponentBuilderHelper;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
-import jne.scenemaker.screens.main.SceneMakerScreen;
+import jne.sceneeditor.screens.SceneEditorScreen;
+import jne.sceneeditor.screens.components.settings.SettingButtonScreen;
+import jne.sceneeditor.screens.components.settings.SettingLabelScreen;
+import jne.sceneeditor.screens.components.settings.SettingTextureScreen;
 
 import java.awt.*;
 
 public class AddComponentScreen extends ComponentsListener {
 
-    private final int Z_LEVEL = 1;
+    private final int Z_LEVEL = 15;
 
     private final Color toolColor = new Color(0x383838);
     private final Color barColor = new Color(0x181818);
@@ -55,8 +57,7 @@ public class AddComponentScreen extends ComponentsListener {
                 .label(GRAPHICS.label().text("Button").centered(true).build(), true)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        ComponentBuilderHelper builder = new ComponentBuilderHelper(GRAPHICS.button().self());
-                        openSubscreen(new SettingComponentScreen(builder, this.area));
+                        openSubscreen(new SettingButtonScreen(this.area));
                     }
                 })
                 .build());
@@ -70,8 +71,7 @@ public class AddComponentScreen extends ComponentsListener {
                 .label(GRAPHICS.label().text("Label").centered(true).build(), true)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        ComponentBuilderHelper builder = new ComponentBuilderHelper(GRAPHICS.label().self());
-                        openSubscreen(new SettingComponentScreen(builder, this.area));
+                        openSubscreen(new SettingLabelScreen(this.area));
                     }
                 })
                 .build());
@@ -85,17 +85,14 @@ public class AddComponentScreen extends ComponentsListener {
                 .label(GRAPHICS.label().text("Texture").centered(true).build(), true)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        ComponentBuilderHelper builder = new ComponentBuilderHelper(GRAPHICS.texture().self());
-                        openSubscreen(new SettingComponentScreen(builder, this.area));
+                        openSubscreen(new SettingTextureScreen(this.area));
                     }
                 })
                 .build());
     }
 
-    @SubscribeEvent(priority = EventPriority.VERY_HIGH)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void render(ScreenEvent.Render event) {
-        float partialTick = event.getPartialTick();
-
         RENDER.color(new Color(0f, 0f, 0f, 0.5F), () -> {
             RENDER.drawQuad(0, 0, Z_LEVEL, width, height);
         });
@@ -104,48 +101,17 @@ public class AddComponentScreen extends ComponentsListener {
             RENDER.drawQuad(area.x, area.y, Z_LEVEL, area.x2, area.y2);
         });
 
-        render(partialTick);
+        super.render(event.getPartialTick());
     }
 
-    @SubscribeEvent(priority = EventPriority.VERY_HIGH)
-    public void move(ScreenEvent.MouseMove event) {
-        this.mouseMove(event.getMouseX(), event.getMouseY());
-    }
-
-    @SubscribeEvent(priority = EventPriority.VERY_HIGH, exclusion = SceneMakerScreen.class)
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = SceneEditorScreen.class)
     public void input(ScreenEvent.MouseInput event) {
-        MouseClickType type = event.getType();
-        if (type == MouseClickType.CLICKED) {
-            this.mouseClicked(event.getMouseX(), event.getMouseY(), event.getButton());
-        }
-        if (type == MouseClickType.RELEASED) {
-            this.mouseReleased(event.getMouseX(), event.getMouseY(), event.getButton());
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.VERY_HIGH)
-    public void clickMove(ScreenEvent.MouseClickMove event) {
-        this.mouseClickMove(event.getMouseX(), event.getMouseY(), event.getButton(), event.getLast());
-    }
-
-    @SubscribeEvent(priority = EventPriority.VERY_HIGH)
-    public void keyboard(ScreenEvent.Keyboard event) {
-        this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
-    }
-
-    @SubscribeEvent(priority = EventPriority.VERY_HIGH)
-    public void tick(ScreenEvent.Tick event) {
-        this.tick();
+        super.input(event);
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
-    public void onCloseSubScreen(ScreenEvent.Close event) {
-        if (event.getScreen().getClass().equals(SettingComponentScreen.class)) {
-            SettingComponentScreen screen = (SettingComponentScreen) event.getScreen();
-
-
-
-        }
+    public void keyboard(ScreenEvent.Keyboard event) {
+        super.keyboard(event);
     }
 
 }

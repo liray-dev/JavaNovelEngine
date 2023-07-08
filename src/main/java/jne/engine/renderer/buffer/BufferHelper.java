@@ -5,7 +5,7 @@ import jne.engine.texture.Texture;
 
 public class BufferHelper implements IWrapper {
 
-    private static final float Z_LEVEL = 0F;
+    private static final float Z_LEVEL = -100F;
 
     public void addQuadData(BufferBuilder builder, float x, float y, float width, float height) {
         this.addQuadData(builder, x, y, Z_LEVEL, width, height);

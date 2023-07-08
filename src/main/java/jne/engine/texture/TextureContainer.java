@@ -35,11 +35,15 @@ public class TextureContainer {
     }
 
     public static Texture get(String name) {
-        if (textures.containsKey(name)) {
-            return textures.get(name);
-        } else {
+        if (name.isEmpty() || name == null) {
             return textures.get("error");
         }
+
+        if (textures.containsKey(name)) {
+            return textures.get(name);
+        }
+        
+        return textures.get("error");
     }
 
     private static final TextureContainer INSTANCE = new TextureContainer();

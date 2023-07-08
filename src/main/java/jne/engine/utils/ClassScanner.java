@@ -1,5 +1,7 @@
 package jne.engine.utils;
 
+import jne.engine.errors.ErrorManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -44,7 +46,7 @@ public class ClassScanner {
                             classes.add(clazz);
                         }
                     } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                        ErrorManager.error(e);
                     }
                 }
             }
@@ -68,14 +70,14 @@ public class ClassScanner {
                                     classes.add(clazz);
                                 }
                             } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
+                                ErrorManager.error(e);
                             }
                         }
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ErrorManager.error(e);
         }
     }
 }

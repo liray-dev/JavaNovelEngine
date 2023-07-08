@@ -1,29 +1,35 @@
-package jne.scenemaker.screens.main;
+package jne.sceneeditor.screens;
 
-import jne.engine.events.types.ScreenEvent;
 import jne.engine.constants.EventPriority;
+import jne.engine.constants.MouseClickType;
+import jne.engine.events.EventListenerHelper;
+import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.engine.texture.TextureContainer;
-import jne.engine.constants.MouseClickType;
-import jne.scenemaker.screens.components.AddComponentScreen;
-import jne.scenemaker.utils.EditingTypes;
+import jne.sceneeditor.screens.components.AddComponentScreen;
+import jne.sceneeditor.utils.EditingTypes;
 
 import java.awt.*;
 import java.util.List;
 
-public class SceneMakerScreen extends ComponentsListener {
+public class SceneEditorScreen extends ComponentsListener {
+
+    public EditingTypes currentEditingType = EditingTypes.NONE;
+    public final ScaledAreaScreen scaledAreaScreen;
+    public int currentButton = Integer.MIN_VALUE;
 
     private final int Z_LEVEL = 0;
-
-    public int currentButton = Integer.MIN_VALUE;
-    public EditingTypes currentEditingType = EditingTypes.NONE;
-
     private final Color clickedToolColor = new Color(0x525252);
     private final Color toolColor = new Color(0x383838);
     private final Color barColor = new Color(0x262626);
+
+    public SceneEditorScreen() {
+        this.scaledAreaScreen = new ScaledAreaScreen(this);
+        EventListenerHelper.register(this.scaledAreaScreen);
+    }
 
     @Override
     public void init() {
@@ -83,51 +89,24 @@ public class SceneMakerScreen extends ComponentsListener {
                     }
                 })
                 .build());
+
+        add(GRAPHICS.button()
+                .id(4)
+                .visible(false)
+                .area(new Area(width - 55, 5, Z_LEVEL, 50, 50))
+                .texture(TextureContainer.get("exit"))
+                .color(toolColor)
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        this.scaledAreaScreen.selectComponent(null);
+                    }
+                })
+                .build());
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void render(ScreenEvent.Render event) {
-        RENDER.color(barColor, () -> {
-            RENDER.drawQuad(0, 0, Z_LEVEL, 60, height);
-        });
-
-        render(event.getPartialTick());
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void move(ScreenEvent.MouseMove event) {
-        this.mouseMove(event.getMouseX(), event.getMouseY());
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void input(ScreenEvent.MouseInput event) {
-        MouseClickType type = event.getType();
-        if (type == MouseClickType.CLICKED) {
-            this.mouseClicked(event.getMouseX(), event.getMouseY(), event.getButton());
-        }
-        if (type == MouseClickType.RELEASED) {
-            this.mouseReleased(event.getMouseX(), event.getMouseY(), event.getButton());
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void clickMove(ScreenEvent.MouseClickMove event) {
-        this.mouseClickMove(event.getMouseX(), event.getMouseY(), event.getButton(), event.getLast());
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void keyboard(ScreenEvent.Keyboard event) {
-        this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void tick(ScreenEvent.Tick event) {
-        this.tick();
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onCloseSubScreen(ScreenEvent.Close event) {
-
+    @Override
+    public void close() {
+        EventListenerHelper.unregister(this.scaledAreaScreen);
     }
 
     @Override
@@ -136,4 +115,34 @@ public class SceneMakerScreen extends ComponentsListener {
         buttons.forEach(it -> it.color = clickedToolColor);
     }
 
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public void render(ScreenEvent.Render event) {
+        RENDER.color(barColor, () -> {
+            RENDER.drawQuad(0, 0, Z_LEVEL, 60, height);
+        });
+        super.render(event);
+    }
+
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public void input(ScreenEvent.MouseInput event) {
+        super.input(event);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        this.scaledAreaScreen.resize(width, height);
+    }
+
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public void tick(ScreenEvent.Tick event) {
+        super.tick(event);
+
+        List<Button> cancel = getComponentsByID(4, Button.class);
+        if (this.scaledAreaScreen.currentComponent.getComponent() != null) {
+            cancel.forEach(it -> it.setVisibility(true));
+        } else {
+            cancel.forEach(it -> it.setVisibility(false));
+        }
+    }
 }

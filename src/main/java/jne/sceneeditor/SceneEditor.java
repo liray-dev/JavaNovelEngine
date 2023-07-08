@@ -1,4 +1,4 @@
-package jne.scenemaker;
+package jne.sceneeditor;
 
 import jne.engine.events.EventListenerHelper;
 import jne.engine.events.types.TextureRegistryEvent;
@@ -10,7 +10,7 @@ import jne.engine.utils.IWrapper;
 import jne.engine.utils.ResourceLocation;
 
 @Novel
-public class SceneMaker implements IWrapper {
+public class SceneEditor implements IWrapper {
 
     public static Texture error;
     public static Texture background;
@@ -22,7 +22,7 @@ public class SceneMaker implements IWrapper {
     public static Texture trueIcon;
     public static Texture falseIcon;
 
-    public SceneMaker() {
+    public SceneEditor() {
         EventListenerHelper.register(this);
     }
 
@@ -30,15 +30,15 @@ public class SceneMaker implements IWrapper {
     public void onTextureRegistry(TextureRegistryEvent event) {
         TextureContainer container = event.getContainer();
 
-        error = container.register(new ResourceLocation("scenemaker/error.png"));
-        background = container.register(new ResourceLocation("scenemaker/background.png"));
-        resize = container.register(new ResourceLocation("scenemaker/resize.png"));
-        move = container.register(new ResourceLocation("scenemaker/move.png"));
-        zoom = container.register(new ResourceLocation("scenemaker/zoom.png"));
-        add = container.register(new ResourceLocation("scenemaker/add.png"));
-        exit = container.register(new ResourceLocation("scenemaker/exit.png"));
-        trueIcon = container.register(new ResourceLocation("scenemaker/true.png"));
-        falseIcon = container.register(new ResourceLocation("scenemaker/false.png"));
+        error = container.register(new ResourceLocation("sceneeditor/error.png"));
+        background = container.register(new ResourceLocation("sceneeditor/background.png"));
+        resize = container.register(new ResourceLocation("sceneeditor/resize.png"));
+        move = container.register(new ResourceLocation("sceneeditor/move.png"));
+        zoom = container.register(new ResourceLocation("sceneeditor/zoom.png"));
+        add = container.register(new ResourceLocation("sceneeditor/add.png"));
+        exit = container.register(new ResourceLocation("sceneeditor/exit.png"));
+        trueIcon = container.register(new ResourceLocation("sceneeditor/true.png"));
+        falseIcon = container.register(new ResourceLocation("sceneeditor/false.png"));
 
 
     }

@@ -15,7 +15,6 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     public ScriptContainer scriptContainer;
 
     protected int mouseX, mouseY;
-    protected int mouseOffsetX, mouseOffsetY;
 
     protected boolean active;
     protected boolean visible;
@@ -23,6 +22,10 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     protected boolean isTooltip = false;
     protected int ticks = 0;
+
+    public IPressable<SELF> onPress;
+    public IPressable<SELF> onFailPress;
+    public ITooltip<SELF> onTooltip;
 
     protected Component() {
         this.id = -1;
@@ -46,6 +49,10 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     final public void render(float partialTicks) {
         if (this.visible) {
             onRender(partialTicks);
+
+            if (onTooltip != null && this.focused) {
+                onTooltip.onTooltip(self(), mouseX, mouseY, partialTicks);
+            }
         }
     }
 
@@ -73,9 +80,11 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             boolean focused = checkFocus(mouseX, mouseY);
             if (focused) {
                 this.active = true;
-                this.mouseOffsetX = (int) (mouseX - this.area.x);
-                this.mouseOffsetY = (int) (mouseY - this.area.y);
                 onClicked(mouseX, mouseY, mouseButton, MouseClickType.CLICKED);
+
+                if (onPress != null) {
+                    onPress.onPress(self(), MouseClickType.CLICKED);
+                }
 
                 ScriptEvent.Press press = new ScriptEvent.Press(this);
                 scriptContainer.run(EnumScriptType.PRESS, press);
@@ -83,6 +92,10 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             } else {
                 this.active = false;
                 onFailClick(mouseX, mouseY, mouseButton, MouseClickType.CLICKED);
+
+                if (onFailPress != null) {
+                    onFailPress.onPress(self(), MouseClickType.CLICKED);
+                }
 
                 ScriptEvent.FailPress failPress = new ScriptEvent.FailPress(this);
                 scriptContainer.run(EnumScriptType.FAIL_PRESS, failPress);
@@ -98,9 +111,16 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             if (focused) {
                 this.active = true;
                 onClicked(mouseX, mouseY, mouseButton, MouseClickType.RELEASED);
+                if (onPress != null) {
+                    onPress.onPress(self(), MouseClickType.RELEASED);
+                }
             } else {
                 this.active = false;
                 onFailClick(mouseX, mouseY, mouseButton, MouseClickType.RELEASED);
+
+                if (onFailPress != null) {
+                    onFailPress.onPress(self(), MouseClickType.RELEASED);
+                }
             }
         }
     }
@@ -112,9 +132,16 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             if (focused) {
                 this.active = true;
                 onMoveClick(mouseX, mouseY, mouseButton, timeSinceLastClick);
+                if (onPress != null) {
+                    onPress.onPress(self(), MouseClickType.MOVED);
+                }
             } else {
                 this.active = false;
                 onFailClick(mouseX, mouseY, mouseButton, MouseClickType.MOVED);
+
+                if (onFailPress != null) {
+                    onFailPress.onPress(self(), MouseClickType.MOVED);
+                }
             }
         }
     }
@@ -217,11 +244,17 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             return self();
         }
 
+        public SELF visible(boolean flag) {
+            instance().visible = flag;
+            return self();
+        }
+
         public SELF area(Area area) {
             instance().area = area;
             return self();
         }
 
+        @ComponentConstructor(text = "Script", example = "example: code...")
         public SELF script(String code) {
             instance().scriptContainer.script = code;
             return self();
@@ -229,6 +262,21 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
         public SELF scriptContainer(ScriptContainer container) {
             instance().scriptContainer = container;
+            return self();
+        }
+
+        public SELF onPress(IPressable<T> onPress) {
+            instance().onPress = onPress;
+            return self();
+        }
+
+        public SELF onFailPress(IPressable<T> onFailPress) {
+            instance().onFailPress = onFailPress;
+            return self();
+        }
+
+        public SELF onTooltip(ITooltip<T> onTooltip) {
+            instance().onTooltip = onTooltip;
             return self();
         }
 

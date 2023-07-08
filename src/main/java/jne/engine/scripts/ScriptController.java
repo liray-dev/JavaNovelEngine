@@ -1,5 +1,7 @@
 package jne.engine.scripts;
 
+import jne.engine.errors.ErrorManager;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
@@ -35,8 +37,8 @@ public class ScriptController {
                 this.languages.put(factory.getLanguageName(), ".js");
                 this.factories.put(factory.getLanguageName().toLowerCase(), factory);
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
+        } catch (Exception e) {
+            ErrorManager.error(e);
         }
     }
 

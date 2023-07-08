@@ -1,5 +1,6 @@
 package jne.engine.events;
 
+import jne.engine.errors.ErrorManager;
 import jne.engine.events.types.Event;
 import jne.engine.events.utils.EventListener;
 import jne.engine.events.utils.SubscribeEvent;
@@ -64,10 +65,14 @@ public class EventListenerHelper {
             try {
                 if (!exclusion.contains(it.getSubscriber().getClass())) {
                     exclusion.addAll(Arrays.asList(it.getExclusion()));
-                    it.getMethod().invoke(it.getSubscriber(), event);
+                    try {
+                        it.getMethod().invoke(it.getSubscriber(), event);
+                    } catch (Exception e) {
+                        throw new IllegalAccessException("Errors when calling an event " + it.getSubscriber().getClass().getName() + " with event " + event.getClass().getName());
+                    }
                 }
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                ErrorManager.error(e);
             }
         });
 

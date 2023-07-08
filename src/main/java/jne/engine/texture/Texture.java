@@ -1,5 +1,6 @@
 package jne.engine.texture;
 
+import jne.engine.errors.ErrorManager;
 import jne.engine.utils.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -65,7 +66,7 @@ public class Texture {
             this.createTexture(width, height, buffer);
         } catch (IOException e) {
             this.available = false;
-            e.printStackTrace();
+            ErrorManager.error(e);
         }
     }
 

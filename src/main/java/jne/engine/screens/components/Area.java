@@ -1,5 +1,7 @@
 package jne.engine.screens.components;
 
+import jne.engine.constants.Direction;
+
 public class Area {
 
     public float x, y, x2, y2, z;
@@ -52,6 +54,24 @@ public class Area {
         this.y2 = y + height;
     }
 
+    public Direction direction(int mouseX, int mouseY) {
+        Area center = getCenter();
+
+        float deltaX = mouseX - center.x;
+        float deltaY = mouseY - center.y;
+
+        float angle = (float) Math.toDegrees(Math.atan2(deltaY, deltaX));
+
+        if (angle < 0) {
+            angle += 360;
+        }
+
+        float sectorAngle = 360 / Direction.values().length;
+        int sectorIndex = (int) (angle / sectorAngle);
+
+        return Direction.values()[sectorIndex];
+    }
+
     public Area offset(float offsetX, float offsetY) {
         float x = this.x2 + offsetX;
         float y = this.y2 + offsetY;
@@ -71,6 +91,12 @@ public class Area {
     public boolean onArea(float mouseX, float mouseY) {
         boolean flag = mouseX >= x && mouseX <= x2;
         boolean flag2 = mouseY >= y && mouseY <= y2;
+        return flag && flag2;
+    }
+
+    public boolean onArea(float mouseX, float mouseY, float offsetX, float offsetY) {
+        boolean flag = mouseX >= x - offsetX && mouseX <= x2 + offsetX;
+        boolean flag2 = mouseY >= y - offsetY && mouseY <= y2 + offsetY;
         return flag && flag2;
     }
 

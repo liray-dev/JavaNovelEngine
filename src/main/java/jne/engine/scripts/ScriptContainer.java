@@ -1,6 +1,7 @@
 package jne.engine.scripts;
 
 import jne.engine.constants.EnumScriptType;
+import jne.engine.errors.ErrorManager;
 import jne.engine.events.types.Event;
 
 import javax.script.Invocable;
@@ -32,7 +33,7 @@ public class ScriptContainer {
         this.script = "";
         this.console = new TreeMap<>();
         this.errored = false;
-        //this.engine = ScriptController.instance.getEngineByName("ecmascript");
+        this.engine = ScriptController.instance.getEngineByName("ecmascript");
         this.init = false;
     }
 
@@ -42,6 +43,11 @@ public class ScriptContainer {
 
     public void run(String type, Object event) {
         if (!this.hasCode() || this.errored) {
+            if (!console.isEmpty()) {
+                System.out.println(console);
+            }
+            console.clear();
+            this.errored = false;
             return;
         }
         if (this.engine == null) {
@@ -57,14 +63,14 @@ public class ScriptContainer {
                     this.engine.eval(this.getFullCode());
                     this.init = true;
                 }
-
+                this.engine.eval(this.getFullCode());
                 ((Invocable) this.engine).invokeFunction(type, event);
 
             } catch (NoSuchMethodException e2) {
                 this.unknownFunctions.add(type);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 this.errored = true;
-                e.printStackTrace(pw);
+                ErrorManager.error(e);
             } finally {
                 this.appandConsole(sw.getBuffer().toString().trim());
                 pw.close();
@@ -93,7 +99,7 @@ public class ScriptContainer {
                 this.fullscript += "\n";
             }
         }
-        return this.fullscript;
+        return this.script;
     }
 
     public boolean hasCode() {

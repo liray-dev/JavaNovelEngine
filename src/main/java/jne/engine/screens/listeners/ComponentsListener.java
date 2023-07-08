@@ -1,12 +1,21 @@
 package jne.engine.screens.listeners;
 
 import jne.engine.constants.EnumScriptType;
+import jne.engine.constants.EventPriority;
 import jne.engine.constants.KeyboardType;
+import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.types.ScriptEvent;
+import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.Button;
+import jne.engine.screens.widgets.Label;
+import jne.engine.screens.widgets.TexturedComponent;
 import jne.engine.utils.IComponentsListener;
 import jne.engine.utils.IWrapper;
+import jne.sceneeditor.screens.components.settings.SettingButtonScreen;
+import jne.sceneeditor.screens.components.settings.SettingLabelScreen;
+import jne.sceneeditor.screens.components.settings.SettingTextureScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +75,7 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
         getComponents().forEach(Component::tick);
     }
 
-    final public void resize(int width, int height) {
+    public void resize(int width, int height) {
         this.width = width;
         this.height = height;
         recreate();
@@ -74,7 +83,7 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
 
     final public void recreate() {
         if (!isInit) {
-            components.clear();
+            clearComponents();
             init();
         }
         update();
@@ -113,8 +122,16 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
 
     }
 
+    final public void setComponents(List<Component> list) {
+        this.components.addAll(list);
+    }
+
     final public List<Component> getComponents() {
         return new ArrayList<>(components);
+    }
+
+    final public void clearComponents() {
+        this.components.clear();
     }
 
     final public <T extends Component> List<T> getComponentsByType(Class<T> componentType) {
@@ -137,6 +154,41 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
                 .filter(it -> it.id == id)
                 .map(c -> (T) c)
                 .collect(Collectors.toList());
+    }
+
+
+    public void render(ScreenEvent.Render event) {
+        render(event.getPartialTick());
+    }
+
+    public void move(ScreenEvent.MouseMove event) {
+        mouseMove(event.getMouseX(), event.getMouseY());
+    }
+
+    public void input(ScreenEvent.MouseInput event) {
+        MouseClickType type = event.getType();
+        if (type == MouseClickType.CLICKED) {
+            mouseClicked(event.getMouseX(), event.getMouseY(), event.getButton());
+        }
+        if (type == MouseClickType.RELEASED) {
+            mouseReleased(event.getMouseX(), event.getMouseY(), event.getButton());
+        }
+    }
+
+    public void clickMove(ScreenEvent.MouseClickMove event) {
+        mouseClickMove(event.getMouseX(), event.getMouseY(), event.getButton(), event.getLast());
+    }
+
+    public void keyboard(ScreenEvent.Keyboard event) {
+        keyTyped(event.getCharacter(), event.getButton(), event.getType());
+    }
+
+    public void tick(ScreenEvent.Tick event) {
+        tick();
+    }
+
+    public void onCloseSubScreen(ScreenEvent.Close event) {
+
     }
 
 }

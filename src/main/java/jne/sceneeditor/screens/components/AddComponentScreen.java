@@ -7,7 +7,8 @@ import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
-import jne.sceneeditor.screens.SceneEditorScreen;
+import jne.sceneeditor.screens.ComponentStore;
+import jne.sceneeditor.screens.SceneEditor;
 import jne.sceneeditor.screens.components.settings.SettingButtonScreen;
 import jne.sceneeditor.screens.components.settings.SettingLabelScreen;
 import jne.sceneeditor.screens.components.settings.SettingTextureScreen;
@@ -104,14 +105,19 @@ public class AddComponentScreen extends ComponentsListener {
         super.render(event.getPartialTick());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = SceneEditorScreen.class)
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class})
     public void input(ScreenEvent.MouseInput event) {
         super.input(event);
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class})
     public void keyboard(ScreenEvent.Keyboard event) {
         super.keyboard(event);
+    }
+
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public void tick(ScreenEvent.Tick event) {
+        super.tick(event);
     }
 
 }

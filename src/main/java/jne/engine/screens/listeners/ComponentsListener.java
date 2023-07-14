@@ -109,12 +109,13 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
 
     private final List<Component> components = new ArrayList<Component>();
 
-    final public <T extends Component> void add(T component) {
+    final public <T extends Component> T add(T component) {
         components.add(component);
 
         ScriptEvent.Init init = new ScriptEvent.Init(component);
         component.scriptContainer.run(EnumScriptType.INIT, init);
         init.post();
+        return component;
     }
 
     final public <T extends Component> void remove(T component) {

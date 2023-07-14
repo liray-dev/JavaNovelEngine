@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
 
 public class BufferBuilder
 {
-    /* 6 vertices * (3f vertex + 3f normal + 2f uv) */
     private static final int BYTES_PER_VERTEX = (3 * 4 + 3 * 4 + 2 * 4);
 
     public int vertices;
@@ -81,10 +80,8 @@ public class BufferBuilder
         GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
         GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
-        /* Render with index buffer */
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, this.vertices);
 
-        /* Unbind the buffer. REQUIRED to avoid OpenGL crash */
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 

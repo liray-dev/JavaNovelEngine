@@ -1,6 +1,7 @@
 package jne.sceneeditor.screens;
 
 import jne.engine.constants.EventPriority;
+import jne.engine.constants.Hotkeys;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.EventListenerHelper;
 import jne.engine.events.types.ScreenEvent;
@@ -15,20 +16,23 @@ import jne.sceneeditor.utils.EditingTypes;
 import java.awt.*;
 import java.util.List;
 
-public class SceneEditorScreen extends ComponentsListener {
+public class SceneEditor extends ComponentsListener {
 
     public EditingTypes currentEditingType = EditingTypes.NONE;
-    public final ScaledAreaScreen scaledAreaScreen;
+    public final ComponentStore componentStore;
+    public final FrameMenu frameMenu;
     public int currentButton = Integer.MIN_VALUE;
 
-    private final int Z_LEVEL = 0;
-    private final Color clickedToolColor = new Color(0x525252);
-    private final Color toolColor = new Color(0x383838);
-    private final Color barColor = new Color(0x262626);
+    protected final int Z_LEVEL = 0;
+    protected final Color clickedToolColor = new Color(0x525252);
+    protected final Color toolColor = new Color(0x383838);
+    protected final Color barColor = new Color(0x262626);
 
-    public SceneEditorScreen() {
-        this.scaledAreaScreen = new ScaledAreaScreen(this);
-        EventListenerHelper.register(this.scaledAreaScreen);
+    public SceneEditor() {
+        this.componentStore = new ComponentStore(this);
+        this.frameMenu = new FrameMenu(this);
+        EventListenerHelper.register(this.componentStore);
+        EventListenerHelper.register(this.frameMenu);
     }
 
     @Override
@@ -43,7 +47,6 @@ public class SceneEditorScreen extends ComponentsListener {
                         currentEditingType = EditingTypes.MOVE;
                         currentButton = component.id;
                         recreate();
-                        System.out.println("Click");
                     }
                 })
                 .build());
@@ -85,28 +88,20 @@ public class SceneEditorScreen extends ComponentsListener {
                     if (type == MouseClickType.CLICKED) {
                         openSubscreen(new AddComponentScreen());
                         currentButton = component.id;
+                        this.componentStore.selectComponent(null);
                         recreate();
                     }
                 })
                 .build());
 
-        add(GRAPHICS.button()
-                .id(4)
-                .visible(false)
-                .area(new Area(width - 55, 5, Z_LEVEL, 50, 50))
-                .texture(TextureContainer.get("exit"))
-                .color(toolColor)
-                .onPress((component, type) -> {
-                    if (type == MouseClickType.CLICKED) {
-                        this.scaledAreaScreen.selectComponent(null);
-                    }
-                })
-                .build());
+        frameMenu.init();
+
     }
 
     @Override
     public void close() {
-        EventListenerHelper.unregister(this.scaledAreaScreen);
+        EventListenerHelper.unregister(this.componentStore);
+        EventListenerHelper.unregister(this.frameMenu);
     }
 
     @Override
@@ -128,21 +123,41 @@ public class SceneEditorScreen extends ComponentsListener {
         super.input(event);
     }
 
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public void keyboard(ScreenEvent.Keyboard event) {
+        int button = event.getButton();
+        if (button == Hotkeys.moveKey) {
+            currentEditingType = EditingTypes.MOVE;
+            currentButton = 0;
+            recreate();
+        }
+        if (button == Hotkeys.resizeKey) {
+            currentEditingType = EditingTypes.RESIZE;
+            currentButton = 1;
+            recreate();
+        }
+        if (button == Hotkeys.zoomKey) {
+            currentEditingType = EditingTypes.ZOOM;
+            currentButton = 2;
+            recreate();
+        }
+        if (button == Hotkeys.addKey) {
+            openSubscreen(new AddComponentScreen());
+            currentButton = 3;
+            this.componentStore.selectComponent(null);
+            recreate();
+        }
+    }
+
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        this.scaledAreaScreen.resize(width, height);
+        this.componentStore.resize(width, height);
+        this.frameMenu.resize(width, height);
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void tick(ScreenEvent.Tick event) {
         super.tick(event);
-
-        List<Button> cancel = getComponentsByID(4, Button.class);
-        if (this.scaledAreaScreen.currentComponent.getComponent() != null) {
-            cancel.forEach(it -> it.setVisibility(true));
-        } else {
-            cancel.forEach(it -> it.setVisibility(false));
-        }
     }
 }

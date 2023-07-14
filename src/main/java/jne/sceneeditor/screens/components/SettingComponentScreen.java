@@ -14,7 +14,8 @@ import jne.engine.screens.widgets.CheckBox;
 import jne.engine.screens.widgets.TextBox;
 import jne.engine.texture.TextureContainer;
 import jne.engine.utils.Util;
-import jne.sceneeditor.screens.SceneEditorScreen;
+import jne.sceneeditor.screens.ComponentStore;
+import jne.sceneeditor.screens.SceneEditor;
 
 import java.awt.*;
 import java.lang.reflect.Method;
@@ -174,12 +175,12 @@ public class SettingComponentScreen extends ComponentsListener {
         render(partialTick);
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditorScreen.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class, AddComponentScreen.class})
     public void move(ScreenEvent.MouseMove event) {
         this.mouseMove(event.getMouseX(), event.getMouseY());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditorScreen.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class, AddComponentScreen.class})
     public void input(ScreenEvent.MouseInput event) {
         MouseClickType type = event.getType();
         if (type == MouseClickType.CLICKED) {
@@ -190,14 +191,14 @@ public class SettingComponentScreen extends ComponentsListener {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditorScreen.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class, AddComponentScreen.class})
     public void keyboard(ScreenEvent.Keyboard event) {
         this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class})
     public void tick(ScreenEvent.Tick event) {
-        this.tick();
+        super.tick(event);
     }
 
 }

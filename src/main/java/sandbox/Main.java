@@ -32,6 +32,8 @@ public class Main {
         } catch (ScriptException e) {
             ErrorManager.error(e);
         }
+
+        System.out.println(Color.WHITE.getRGB());
     }
 
     public static void openWebpage(String url) {

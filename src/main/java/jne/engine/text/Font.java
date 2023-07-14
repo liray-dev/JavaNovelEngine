@@ -219,6 +219,11 @@ public class Font implements IWrapper {
         texture.unbind();
     }
 
+    public void drawShadowedText(CharSequence text, float x, float y, float z, Color color, boolean centered, float size) {
+        drawText(text, x + 1, y + 1, z, new Color(0x383838), centered, size);
+        drawText(text, x, y, z, color, centered, size);
+    }
+
     public void drawText(CharSequence text, float x, float y, float z, Color color, boolean centered, float size) {
         RENDER.push();
         RENDER.scale(size, size, () -> {

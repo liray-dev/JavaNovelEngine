@@ -1,5 +1,6 @@
 package jne.engine.renderer;
 
+import jne.engine.screens.components.Area;
 import jne.engine.texture.Texture;
 import jne.engine.utils.IWrapper;
 import org.lwjgl.opengl.GL11;
@@ -78,6 +79,37 @@ public class RenderHelper implements IWrapper {
         BUFFER_HELPER.addQuadData(BUILDER, x, y, z, width, height);
         TESSELLATOR.draw();
         texture.unbind();
+    }
+
+    private final Color outlineColor = new Color(0xCC000000, true);
+    private final Color outlineColor2 = new Color(0xCCFFFFFF, true);
+
+    public void drawOutline(Area area) {
+        drawOutline(area, outlineColor, outlineColor2);
+    }
+
+    public void drawOutline(Area area, Color color, Color color2) {
+        RENDER.color(color, () -> {
+            //TOP
+            RENDER.drawQuad(area.x - 1, area.y - 1, area.z, area.x2 + 2, area.y + 2);
+            //RIGHT
+            RENDER.drawQuad(area.x2 - 1, area.y - 1, area.z, area.x2 + 2, area.y2 + 2);
+            //BOTTOM
+            RENDER.drawQuad(area.x2 - 1, area.y2 - 1, area.z, area.x, area.y2 + 2);
+            //LEFT
+            RENDER.drawQuad(area.x - 1, area.y2 + 1, area.z, area.x + 2, area.y + 2);
+        });
+
+        RENDER.color(color2, () -> {
+            //TOP
+            RENDER.drawQuad(area.x, area.y, area.z, area.x2 + 1, area.y + 1);
+            //RIGHT
+            RENDER.drawQuad(area.x2, area.y, area.z, area.x2 + 1, area.y2 + 1);
+            //BOTTOM
+            RENDER.drawQuad(area.x2, area.y2, area.z, area.x, area.y2 + 1);
+            //LEFT
+            RENDER.drawQuad(area.x, area.y2, area.z, area.x + 1, area.y + 1);
+        });
     }
 
 }

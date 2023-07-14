@@ -16,15 +16,18 @@ import jne.sceneeditor.screens.components.settings.SettingTextureScreen;
 import jne.sceneeditor.utils.EditingTypes;
 import jne.sceneeditor.utils.Frame;
 import jne.sceneeditor.utils.MovableComponent;
+import org.lwjgl.input.Keyboard;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class ScaledAreaScreen extends ComponentsListener {
+public class ComponentStore extends ComponentsListener {
 
     protected final int Z_LEVEL = -100;
 
-    public final SceneEditorScreen sceneEditorScreen;
     public final HashSet<Frame> frames = new HashSet<>();
+    public final SceneEditor sceneEditorScreen;
 
     public Component lastClickedComponent = null;
 
@@ -32,7 +35,7 @@ public class ScaledAreaScreen extends ComponentsListener {
     public Frame currentFrame = new Frame(id);
     public MovableComponent currentComponent = new MovableComponent(null);
 
-    public ScaledAreaScreen(SceneEditorScreen sceneEditorScreen) {
+    public ComponentStore(SceneEditor sceneEditorScreen) {
         this.sceneEditorScreen = sceneEditorScreen;
         this.frames.add(currentFrame);
     }
@@ -64,26 +67,71 @@ public class ScaledAreaScreen extends ComponentsListener {
     }
 
     public void selectFrame(Frame frame) {
-        // If equals
         if (this.currentFrame.equals(frame)) return;
-        // If not created
-        if (!frames.contains(frame)) return;
 
-        // Save
+        save();
+        clear();
+        load(frame);
+    }
+
+    public void save() {
         this.currentFrame.setComponents(getComponents());
+    }
+
+    public void clear() {
         this.clearComponents();
         this.lastClickedComponent = null;
         this.selectComponent(null);
-
-        // Load
-        this.currentFrame = frame;
-        this.setComponents(this.currentFrame.getComponents());
     }
 
-    public void createFrame() {
+    public void load(Frame frame) {
+        this.currentFrame = frame;
+        this.setComponents(frame.getComponents());
+    }
+
+    public Frame getFrame(int id) {
+        List<Frame> collect = frames.stream().filter(it -> it.getId() == id).collect(Collectors.toList());
+        if (collect.size() != 1) {
+            return createFrame(id);
+        }
+        return collect.get(0);
+    }
+
+
+    public boolean hasFrame(int id) {
+        return frames.stream().anyMatch(it -> it.getId() == id);
+    }
+
+    public Frame createFrame() {
         Frame frame = new Frame(id++);
         this.frames.add(frame);
-        selectFrame(frame);
+        return frame;
+    }
+
+    public Frame createFrame(int id) {
+        Frame frame = new Frame(id);
+        this.frames.add(frame);
+        return frame;
+    }
+
+    public void deleteFrame(int id) {
+        if (hasFrame(id)) {
+            Frame frame = getFrame(id);
+            if (hasFrame(id - 1)) {
+                frames.remove(frame);
+                Frame frame2 = getFrame(id - 1);
+                clear();
+                load(frame2);
+            }
+        }
+    }
+
+    public Frame getCurrentFrame() {
+        return currentFrame;
+    }
+
+    public int getCurrentFrameID() {
+        return currentFrame.getId();
     }
 
     public EditingTypes getEditType() {
@@ -129,6 +177,14 @@ public class ScaledAreaScreen extends ComponentsListener {
             init();
         }
 
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void keyboard(ScreenEvent.Keyboard event) {
+        int button = event.getButton();
+        if (button == Keyboard.KEY_ESCAPE) {
+            selectComponent(null);
+        }
     }
 
     @SubscribeEvent

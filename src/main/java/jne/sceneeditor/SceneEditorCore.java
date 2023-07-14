@@ -10,7 +10,7 @@ import jne.engine.utils.IWrapper;
 import jne.engine.utils.ResourceLocation;
 
 @Novel
-public class SceneEditor implements IWrapper {
+public class SceneEditorCore implements IWrapper {
 
     public static Texture error;
     public static Texture background;
@@ -22,7 +22,7 @@ public class SceneEditor implements IWrapper {
     public static Texture trueIcon;
     public static Texture falseIcon;
 
-    public SceneEditor() {
+    public SceneEditorCore() {
         EventListenerHelper.register(this);
     }
 
@@ -40,6 +40,9 @@ public class SceneEditor implements IWrapper {
         trueIcon = container.register(new ResourceLocation("sceneeditor/true.png"));
         falseIcon = container.register(new ResourceLocation("sceneeditor/false.png"));
 
+        container.register(new ResourceLocation("back.png"));
+        container.register(new ResourceLocation("girl.png"));
+        container.register(new ResourceLocation("phil_alpha.png"));
 
     }
 

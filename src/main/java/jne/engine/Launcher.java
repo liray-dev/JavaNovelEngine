@@ -2,7 +2,7 @@ package jne.engine;
 
 import jne.engine.core.JNE;
 import jne.engine.utils.GameConfiguration;
-import jne.sceneeditor.screens.SceneEditorScreen;
+import jne.sceneeditor.screens.SceneEditor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class Launcher {
 
         GameConfiguration configuration = new GameConfiguration(displayInformation, folderInformation);
 
-        (new JNE(configuration, new SceneEditorScreen())).run();
+        (new JNE(configuration, new SceneEditor())).run();
     }
 
 }

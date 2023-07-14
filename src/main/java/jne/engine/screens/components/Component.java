@@ -4,11 +4,14 @@ package jne.engine.screens.components;
 import jne.engine.constants.EnumScriptType;
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
+import jne.engine.errors.ErrorListener;
+import jne.engine.errors.ErrorManager;
 import jne.engine.events.types.ScriptEvent;
+import jne.engine.screens.widgets.Button;
 import jne.engine.scripts.ScriptContainer;
 import jne.engine.utils.*;
 
-public class Component<SELF extends Component<SELF>> implements IComponentsListener, IComponent, IWrapper {
+public class Component<SELF extends Component<SELF>> implements IComponentsListener, IComponent, IWrapper, Cloneable {
 
     public int id;
     public Area area;
@@ -226,6 +229,18 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     @Override
     public void onTick() {
 
+    }
+
+    @Override
+    public Component clone() {
+        try {
+            Component clone = (Component) super.clone();
+            clone.setArea(area.clone());
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            ErrorManager.error(e);
+        }
+        return null;
     }
 
     protected SELF self() {

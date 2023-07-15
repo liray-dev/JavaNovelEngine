@@ -1,4 +1,4 @@
-package jne.sceneeditor.utils;
+package jne.editor.utils;
 
 import jne.engine.screens.components.Component;
 import lombok.Data;

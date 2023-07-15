@@ -1,4 +1,4 @@
-package jne.sceneeditor.utils;
+package jne.editor.utils;
 
 public enum EditingTypes {
 

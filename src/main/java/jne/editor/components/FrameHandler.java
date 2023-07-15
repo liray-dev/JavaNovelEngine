@@ -1,4 +1,4 @@
-package jne.sceneeditor.screens;
+package jne.editor.components;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.KeyboardType;
@@ -9,59 +9,51 @@ import jne.engine.screens.components.Area;
 import jne.engine.screens.components.Component;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
-import jne.engine.texture.TextureContainer;
-import jne.sceneeditor.utils.EditingTypes;
-import jne.sceneeditor.utils.Frame;
+import jne.editor.utils.Frame;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FrameMenu extends ComponentsListener {
+import static jne.engine.constants.Colors.brightBarColor;
+import static jne.engine.constants.Colors.clickedToolColor;
+
+public class FrameHandler extends ComponentsListener {
 
     protected final int Z_LEVEL = -50;
 
     public final SceneEditor sceneEditorScreen;
 
-    public FrameMenu(SceneEditor sceneEditorScreen) {
+    public FrameHandler(SceneEditor sceneEditorScreen) {
         this.sceneEditorScreen = sceneEditorScreen;
     }
 
     public int currentButton = Integer.MIN_VALUE;
 
-    public Button left;
-    public Button right;
-
-    public Button currentFrame;
-    public Button leftFrame;
-    public Button rightFrame;
-
-
     @Override
     public void init() {
-        int id = sceneEditorScreen.componentStore.currentFrame.getId();
+        int id = sceneEditorScreen.componentStore.getCurrentFrameID();
 
-        left = add(GRAPHICS.button()
+        add(GRAPHICS.button()
                 .id(0)
                 .area(new Area(60, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text("-").color(sceneEditorScreen.clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
-                .color(sceneEditorScreen.barColor)
+                .label(GRAPHICS.label().text("-").color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
+                .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         if (id - 1 < 0) return;
-                        sceneEditorScreen.componentStore.deleteFrame(id);
+                        sceneEditorScreen.componentStore.deleteFrame(sceneEditorScreen.componentStore.getCurrentFrameID());
                         currentButton = component.id;
                         recreate();
                     }
                 })
                 .build());
 
-        leftFrame = add(GRAPHICS.button()
+        add(GRAPHICS.button()
                 .id(1)
                 .area(new Area(85, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text(id - 1 < 0 ? "..." : String.valueOf(id - 1)).color(sceneEditorScreen.clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
-                .color(sceneEditorScreen.barColor)
+                .label(GRAPHICS.label().text(id - 1 < 0 ? "..." : String.valueOf(id - 1)).color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
+                .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         if (id - 1 < 0) return;
@@ -72,11 +64,11 @@ public class FrameMenu extends ComponentsListener {
                 })
                 .build());
 
-        currentFrame = add(GRAPHICS.button()
+        add(GRAPHICS.button()
                 .id(2)
                 .area(new Area(110, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text(String.valueOf(id)).color(sceneEditorScreen.clickedToolColor.brighter().brighter().brighter()).size(0.5F).centered(true).build(), true)
-                .color(sceneEditorScreen.barColor)
+                .label(GRAPHICS.label().text(String.valueOf(id)).color(clickedToolColor.brighter().brighter().brighter()).size(0.5F).centered(true).build(), true)
+                .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         currentButton = component.id;
@@ -85,11 +77,11 @@ public class FrameMenu extends ComponentsListener {
                 })
                 .build());
 
-        rightFrame = add(GRAPHICS.button()
+        add(GRAPHICS.button()
                 .id(3)
                 .area(new Area(135, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text(!sceneEditorScreen.componentStore.hasFrame(id + 1) ? "..." : String.valueOf(id + 1)).color(sceneEditorScreen.clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
-                .color(sceneEditorScreen.barColor)
+                .label(GRAPHICS.label().text(!sceneEditorScreen.componentStore.hasFrame(id + 1) ? "..." : String.valueOf(id + 1)).color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
+                .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         if (!sceneEditorScreen.componentStore.hasFrame(id + 1)) return;
@@ -100,11 +92,11 @@ public class FrameMenu extends ComponentsListener {
                 })
                 .build());
 
-        right = add(GRAPHICS.button()
+        add(GRAPHICS.button()
                 .id(4)
                 .area(new Area(160, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text("+").color(sceneEditorScreen.clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
-                .color(sceneEditorScreen.barColor)
+                .label(GRAPHICS.label().text("+").color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
+                .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         if (sceneEditorScreen.componentStore.hasFrame(id + 1)) return;
@@ -118,13 +110,12 @@ public class FrameMenu extends ComponentsListener {
                     }
                 })
                 .build());
-
     }
 
     @Override
     public void update() {
         List<Button> buttons = getComponentsByID(currentButton, Button.class);
-        buttons.forEach(it -> it.color = sceneEditorScreen.clickedToolColor);
+        buttons.forEach(it -> it.color = clickedToolColor);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

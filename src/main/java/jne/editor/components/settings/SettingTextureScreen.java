@@ -1,9 +1,9 @@
-package jne.sceneeditor.screens.components.settings;
+package jne.editor.components.settings;
 
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.ComponentBuilderHelper;
 import jne.engine.screens.widgets.TexturedComponent;
-import jne.sceneeditor.screens.components.SettingComponentScreen;
+import jne.editor.components.SettingComponentScreen;
 
 public class SettingTextureScreen extends SettingComponentScreen {
 

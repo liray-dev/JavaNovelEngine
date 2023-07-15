@@ -1,5 +1,6 @@
 package jne.engine.screens.widgets;
 
+import jne.engine.constants.Colors;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.Component;
 import jne.engine.screens.components.ComponentConstructor;
@@ -8,7 +9,7 @@ import java.awt.*;
 
 public class Label<SELF extends Label<SELF>> extends Component<SELF> {
 
-    public Color color = Color.WHITE;
+    public Color color = Colors.textColor;
     public float size = 1F;
     public String text;
     public boolean isCentered;

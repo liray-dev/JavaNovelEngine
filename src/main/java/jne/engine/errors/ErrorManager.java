@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static jne.engine.constants.Colors.*;
+
 public class ErrorManager implements IWrapper {
 
     public static final TreeMap<Integer, ErrorListener> errors = new TreeMap<>();
@@ -75,7 +77,7 @@ public class ErrorManager implements IWrapper {
                             .area(new Area(area.x, area.y, area.z, 0, 0))
                             .text(keyError)
                             .size(0.5F)
-                            .color(new Color(0xB78181))
+                            .color(falseColor)
                             .build();
 
                     label.onRender(1F);
@@ -88,7 +90,7 @@ public class ErrorManager implements IWrapper {
                             .area(new Area(area.x, area.y, area.z, 0, 0))
                             .text("...")
                             .size(0.5F)
-                            .color(new Color(0xB78181))
+                            .color(falseColor)
                             .build();
 
                     label.onRender(1F);

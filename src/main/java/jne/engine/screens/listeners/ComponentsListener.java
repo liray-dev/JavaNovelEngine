@@ -1,21 +1,13 @@
 package jne.engine.screens.listeners;
 
 import jne.engine.constants.EnumScriptType;
-import jne.engine.constants.EventPriority;
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.types.ScriptEvent;
-import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Component;
-import jne.engine.screens.widgets.Button;
-import jne.engine.screens.widgets.Label;
-import jne.engine.screens.widgets.TexturedComponent;
 import jne.engine.utils.IComponentsListener;
 import jne.engine.utils.IWrapper;
-import jne.sceneeditor.screens.components.settings.SettingButtonScreen;
-import jne.sceneeditor.screens.components.settings.SettingLabelScreen;
-import jne.sceneeditor.screens.components.settings.SettingTextureScreen;
 
 import java.util.ArrayList;
 import java.util.List;

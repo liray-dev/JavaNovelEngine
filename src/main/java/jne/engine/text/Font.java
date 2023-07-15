@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.awt.Font.TRUETYPE_FONT;
+import static jne.engine.constants.Colors.toolColor;
 
 public class Font implements IWrapper {
 
@@ -220,7 +221,7 @@ public class Font implements IWrapper {
     }
 
     public void drawShadowedText(CharSequence text, float x, float y, float z, Color color, boolean centered, float size) {
-        drawText(text, x + 1, y + 1, z, new Color(0x383838), centered, size);
+        drawText(text, x + 1, y + 1, z, toolColor, centered, size);
         drawText(text, x, y, z, color, centered, size);
     }
 

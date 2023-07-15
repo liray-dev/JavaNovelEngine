@@ -1,4 +1,4 @@
-package jne.sceneeditor.screens.components;
+package jne.editor.components;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
@@ -14,8 +14,6 @@ import jne.engine.screens.widgets.CheckBox;
 import jne.engine.screens.widgets.TextBox;
 import jne.engine.texture.TextureContainer;
 import jne.engine.utils.Util;
-import jne.sceneeditor.screens.ComponentStore;
-import jne.sceneeditor.screens.SceneEditor;
 
 import java.awt.*;
 import java.lang.reflect.Method;
@@ -24,14 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static jne.engine.constants.Colors.*;
+
 public class SettingComponentScreen extends ComponentsListener {
 
     public boolean init = false;
     protected final int Z_LEVEL = 30;
     protected final HashMap<MethodConstructor, Component> builderComponents = new HashMap<>();
     protected boolean errored = false;
-    protected final Color toolColor = new Color(0x383838);
-    protected final Color barColor = new Color(0x181818);
     protected final ComponentBuilderHelper builderHelper;
     protected final Area area;
 
@@ -168,7 +166,7 @@ public class SettingComponentScreen extends ComponentsListener {
             RENDER.drawQuad(0, 0, Z_LEVEL, width, height);
         });
 
-        RENDER.color(barColor, () -> {
+        RENDER.color(darkBarColor, () -> {
             RENDER.drawQuad(area.x, area.y, Z_LEVEL, area.x2, area.y2);
         });
 

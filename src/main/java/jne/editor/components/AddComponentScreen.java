@@ -1,4 +1,4 @@
-package jne.sceneeditor.screens.components;
+package jne.editor.components;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
@@ -7,20 +7,18 @@ import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
-import jne.sceneeditor.screens.ComponentStore;
-import jne.sceneeditor.screens.SceneEditor;
-import jne.sceneeditor.screens.components.settings.SettingButtonScreen;
-import jne.sceneeditor.screens.components.settings.SettingLabelScreen;
-import jne.sceneeditor.screens.components.settings.SettingTextureScreen;
+import jne.editor.components.settings.SettingButtonScreen;
+import jne.editor.components.settings.SettingLabelScreen;
+import jne.editor.components.settings.SettingTextureScreen;
 
 import java.awt.*;
+
+import static jne.engine.constants.Colors.darkBarColor;
+import static jne.engine.constants.Colors.toolColor;
 
 public class AddComponentScreen extends ComponentsListener {
 
     private final int Z_LEVEL = 15;
-
-    private final Color toolColor = new Color(0x383838);
-    private final Color barColor = new Color(0x181818);
 
     private Area area = new Area();
 
@@ -98,7 +96,7 @@ public class AddComponentScreen extends ComponentsListener {
             RENDER.drawQuad(0, 0, Z_LEVEL, width, height);
         });
 
-        RENDER.color(barColor, () -> {
+        RENDER.color(darkBarColor, () -> {
             RENDER.drawQuad(area.x, area.y, Z_LEVEL, area.x2, area.y2);
         });
 

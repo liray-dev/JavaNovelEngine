@@ -1,4 +1,4 @@
-package jne.sceneeditor.screens;
+package jne.editor.components;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
@@ -10,12 +10,12 @@ import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.engine.screens.widgets.Label;
 import jne.engine.screens.widgets.TexturedComponent;
-import jne.sceneeditor.screens.components.settings.SettingButtonScreen;
-import jne.sceneeditor.screens.components.settings.SettingLabelScreen;
-import jne.sceneeditor.screens.components.settings.SettingTextureScreen;
-import jne.sceneeditor.utils.EditingTypes;
-import jne.sceneeditor.utils.Frame;
-import jne.sceneeditor.utils.MovableComponent;
+import jne.editor.components.settings.SettingButtonScreen;
+import jne.editor.components.settings.SettingLabelScreen;
+import jne.editor.components.settings.SettingTextureScreen;
+import jne.editor.utils.EditingTypes;
+import jne.editor.utils.Frame;
+import jne.editor.utils.MovableComponent;
 import org.lwjgl.input.Keyboard;
 
 import java.util.HashSet;

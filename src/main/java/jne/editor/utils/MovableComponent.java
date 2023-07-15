@@ -1,5 +1,6 @@
-package jne.sceneeditor.utils;
+package jne.editor.utils;
 
+import jne.engine.constants.Colors;
 import jne.engine.constants.Direction;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
@@ -12,13 +13,13 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
+import static jne.engine.constants.Colors.trueColor;
+
 @Data
 public class MovableComponent implements IWrapper {
 
     private final Component component;
     private EditingTypes type = EditingTypes.NONE;
-    private final Color toolColor = new Color(0x383838);
-    private final Color barColor = new Color(0x181818);
     private boolean tooltip = false;
     private Direction direction;
 
@@ -44,7 +45,7 @@ public class MovableComponent implements IWrapper {
                     "width: " + area.width + "\n" +
                     "height: " + area.height + "\n",
                     mouseX + 15, mouseY, area.z,
-                    shift ? new Color(0xFF88B781, true) : new Color(-1), false, 0.8F);
+                    shift ? trueColor : Color.WHITE, false, 0.8F);
         }
 
         if (direction != null) {
@@ -56,8 +57,8 @@ public class MovableComponent implements IWrapper {
             float x2 = area.x2 - size;
             float y2 = area.y2 - size;
 
-            Color first = new Color(0xCC000000, true);
-            Color second = shift ? new Color(0xFF88B781, true) : new Color(0xCCFFFFFF, true);
+            Color first = Colors.blackOutline;
+            Color second = shift ? trueColor : Colors.whiteOutline;
 
             switch (direction) {
                 case BOTTOM_RIGHT:

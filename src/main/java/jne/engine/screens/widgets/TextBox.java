@@ -7,11 +7,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
+import static jne.engine.constants.Colors.*;
+
 public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
 
-    public Color textColor = new Color(0xFFFFFF);
-    public Color ghostColor = new Color(0x969696);
-    public Color barColor = new Color(0x383838);
     public int cursorPositionX = 0;
     public String text = "";
     public String ghostText = "";
@@ -19,7 +18,7 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
 
     @Override
     public void onRender(float partialTicks) {
-        RENDER.color(barColor, () -> {
+        RENDER.color(toolColor, () -> {
             RENDER.drawQuad(area.x, area.y, area.z, area.x2, area.y2);
         });
         if (text != null && !text.isEmpty()) {
@@ -30,7 +29,7 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
             if (active && ticks >= 10) {
                 int length = text.substring(0, cursorPositionX).length();
                 String spaceString = new String(new char[length]).replace('\0', ' ');
-                FONT.drawText(spaceString + "|", x - FONT.getWidth(text.substring(0, 1)) / (2 / size), y, area.z, new Color(0x809D9D9D, true), false, size);
+                FONT.drawText(spaceString + "|", x - FONT.getWidth(text.substring(0, 1)) / (2 / size), y, area.z, textCursorColor, false, size);
             }
         } else {
             if (ghostText != null && !ghostText.isEmpty()) {

@@ -1,19 +1,9 @@
-package jne.sceneeditor.screens.components.settings;
+package jne.editor.components.settings;
 
-import jne.engine.errors.ErrorManager;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.Component;
 import jne.engine.screens.components.ComponentBuilderHelper;
-import jne.engine.screens.components.MethodConstructor;
 import jne.engine.screens.widgets.Button;
-import jne.engine.screens.widgets.CheckBox;
-import jne.engine.screens.widgets.TextBox;
-import jne.engine.utils.Util;
-import jne.sceneeditor.screens.components.SettingComponentScreen;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
+import jne.editor.components.SettingComponentScreen;
 
 public class SettingButtonScreen extends SettingComponentScreen {
 

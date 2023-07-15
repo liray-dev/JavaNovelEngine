@@ -1,4 +1,4 @@
-package jne.sceneeditor.screens;
+package jne.editor.components;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.Hotkeys;
@@ -10,29 +10,27 @@ import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.engine.texture.TextureContainer;
-import jne.sceneeditor.screens.components.AddComponentScreen;
-import jne.sceneeditor.utils.EditingTypes;
-
-import java.awt.*;
+import jne.editor.utils.EditingTypes;
 import java.util.List;
+
+import static jne.engine.constants.Colors.*;
 
 public class SceneEditor extends ComponentsListener {
 
-    public EditingTypes currentEditingType = EditingTypes.NONE;
+    protected final int Z_LEVEL = 0;
+
     public final ComponentStore componentStore;
-    public final FrameMenu frameMenu;
+    public final FrameHandler frameHandler;
+
+    public EditingTypes currentEditingType = EditingTypes.NONE;
     public int currentButton = Integer.MIN_VALUE;
 
-    protected final int Z_LEVEL = 0;
-    protected final Color clickedToolColor = new Color(0x525252);
-    protected final Color toolColor = new Color(0x383838);
-    protected final Color barColor = new Color(0x262626);
 
     public SceneEditor() {
         this.componentStore = new ComponentStore(this);
-        this.frameMenu = new FrameMenu(this);
+        this.frameHandler = new FrameHandler(this);
         EventListenerHelper.register(this.componentStore);
-        EventListenerHelper.register(this.frameMenu);
+        EventListenerHelper.register(this.frameHandler);
     }
 
     @Override
@@ -94,14 +92,14 @@ public class SceneEditor extends ComponentsListener {
                 })
                 .build());
 
-        frameMenu.init();
+        frameHandler.init();
 
     }
 
     @Override
     public void close() {
         EventListenerHelper.unregister(this.componentStore);
-        EventListenerHelper.unregister(this.frameMenu);
+        EventListenerHelper.unregister(this.frameHandler);
     }
 
     @Override
@@ -112,7 +110,7 @@ public class SceneEditor extends ComponentsListener {
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void render(ScreenEvent.Render event) {
-        RENDER.color(barColor, () -> {
+        RENDER.color(brightBarColor, () -> {
             RENDER.drawQuad(0, 0, Z_LEVEL, 60, height);
         });
         super.render(event);
@@ -153,7 +151,7 @@ public class SceneEditor extends ComponentsListener {
     public void resize(int width, int height) {
         super.resize(width, height);
         this.componentStore.resize(width, height);
-        this.frameMenu.resize(width, height);
+        this.frameHandler.resize(width, height);
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)

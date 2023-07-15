@@ -7,6 +7,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
+import static jne.engine.constants.Colors.*;
+
 public class RenderHelper implements IWrapper {
 
     private static final RenderHelper INSTANCE = new RenderHelper();
@@ -81,11 +83,9 @@ public class RenderHelper implements IWrapper {
         texture.unbind();
     }
 
-    private final Color outlineColor = new Color(0xCC000000, true);
-    private final Color outlineColor2 = new Color(0xCCFFFFFF, true);
 
     public void drawOutline(Area area) {
-        drawOutline(area, outlineColor, outlineColor2);
+        drawOutline(area, blackOutline, whiteOutline);
     }
 
     public void drawOutline(Area area, Color color, Color color2) {

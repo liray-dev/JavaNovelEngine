@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 import static jne.engine.constants.Colors.*;
 
-public class ErrorManager implements IWrapper {
+public class DebugManager implements IWrapper {
 
-    public static final TreeMap<Integer, ErrorListener> errors = new TreeMap<>();
+    public static final TreeMap<Integer, DebugListener> errors = new TreeMap<>();
     private static final int limit = 5;
-    private static final float Z_LEVEL = 500;
+    private static final float Z_LEVEL = 5000;
     private static final Long maxLifeTime = 10000L;
     private static int id = 0;
 
@@ -26,7 +26,11 @@ public class ErrorManager implements IWrapper {
         error(e, maxLifeTime);
     }
 
-    public static void error(Exception e, long lifeTime) {
+    public static void error(Exception e, Long lifeTime) {
+        error(e, lifeTime, errorColor);
+    }
+
+    public static void error(Exception e, long lifeTime, Color color) {
         e.printStackTrace(); // Console log
 
         StringWriter sw = new StringWriter();
@@ -34,23 +38,38 @@ public class ErrorManager implements IWrapper {
         e.printStackTrace(pw); // Write log
         errors.put(
                 id++,
-                new ErrorListener(Util.getSystemTime(), lifeTime, e.getMessage(), sw.toString())
+                new DebugListener(Util.getSystemTime(), lifeTime, e.getMessage(), sw.toString(), color)
+        );
+    }
+
+    public static void debug(String message) {
+        debug(message, maxLifeTime);
+    }
+
+    public static void debug(String message, Long lifeTime) {
+        debug(message, lifeTime, debugColor);
+    }
+
+    public static void debug(String message, long lifeTime, Color color) {
+        errors.put(
+                id++,
+                new DebugListener(Util.getSystemTime(), lifeTime, message, message, color)
         );
     }
 
     public static void render() {
-        Set<Map.Entry<Integer, ErrorListener>> values = new HashSet<>(errors.entrySet());
-        List<Map.Entry<Integer, ErrorListener>> sortedValues = values.stream().sorted(Map.Entry.comparingByKey(Comparator.reverseOrder())).collect(Collectors.toList());
+        Set<Map.Entry<Integer, DebugListener>> values = new HashSet<>(errors.entrySet());
+        List<Map.Entry<Integer, DebugListener>> sortedValues = values.stream().sorted(Map.Entry.comparingByKey(Comparator.reverseOrder())).collect(Collectors.toList());
 
         int x = 5;
         int y = 5;
 
         int i = -1;
 
-        for (Map.Entry<Integer, ErrorListener> error : sortedValues) {
+        for (Map.Entry<Integer, DebugListener> error : sortedValues) {
             i++;
 
-            ErrorListener value = error.getValue();
+            DebugListener value = error.getValue();
             Integer key = error.getKey();
 
             if (Util.getSystemTime() - value.getInitTime() >= value.getLifeTime()) {
@@ -77,7 +96,7 @@ public class ErrorManager implements IWrapper {
                             .area(new Area(area.x, area.y, area.z, 0, 0))
                             .text(keyError)
                             .size(0.5F)
-                            .color(falseColor)
+                            .color(value.getColor())
                             .build();
 
                     label.onRender(1F);
@@ -90,7 +109,7 @@ public class ErrorManager implements IWrapper {
                             .area(new Area(area.x, area.y, area.z, 0, 0))
                             .text("...")
                             .size(0.5F)
-                            .color(falseColor)
+                            .color(value.getColor())
                             .build();
 
                     label.onRender(1F);

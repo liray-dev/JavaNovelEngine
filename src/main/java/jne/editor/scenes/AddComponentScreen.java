@@ -1,15 +1,13 @@
-package jne.editor.components;
+package jne.editor.scenes;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
+import jne.engine.screens.components.constructor.ComponentConstructorHelper;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
-import jne.editor.components.settings.SettingButtonScreen;
-import jne.editor.components.settings.SettingLabelScreen;
-import jne.editor.components.settings.SettingTextureScreen;
 
 import java.awt.*;
 
@@ -18,7 +16,7 @@ import static jne.engine.constants.Colors.toolColor;
 
 public class AddComponentScreen extends ComponentsListener {
 
-    private final int Z_LEVEL = 15;
+    private final int Z_LEVEL = 150;
 
     private Area area = new Area();
 
@@ -56,7 +54,7 @@ public class AddComponentScreen extends ComponentsListener {
                 .label(GRAPHICS.label().text("Button").centered(true).build(), true)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        openSubscreen(new SettingButtonScreen(this.area));
+                        openSubscreen(new SettingComponentScreen(new ComponentConstructorHelper(GRAPHICS.button()), this.area));
                     }
                 })
                 .build());
@@ -70,7 +68,7 @@ public class AddComponentScreen extends ComponentsListener {
                 .label(GRAPHICS.label().text("Label").centered(true).build(), true)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        openSubscreen(new SettingLabelScreen(this.area));
+                        openSubscreen(new SettingComponentScreen(new ComponentConstructorHelper(GRAPHICS.label()), this.area));
                     }
                 })
                 .build());
@@ -84,7 +82,35 @@ public class AddComponentScreen extends ComponentsListener {
                 .label(GRAPHICS.label().text("Texture").centered(true).build(), true)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        openSubscreen(new SettingTextureScreen(this.area));
+                        openSubscreen(new SettingComponentScreen(new ComponentConstructorHelper(GRAPHICS.texture()), this.area));
+                    }
+                })
+                .build());
+
+        Area textbox = texture.offset(-150, 5);
+
+        add(GRAPHICS.button()
+                .id(4)
+                .area(textbox)
+                .color(toolColor)
+                .label(GRAPHICS.label().text("TextBox").centered(true).build(), true)
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        openSubscreen(new SettingComponentScreen(new ComponentConstructorHelper(GRAPHICS.textbox()), this.area));
+                    }
+                })
+                .build());
+
+        Area checkbox = textbox.offset(-150, 5);
+
+        add(GRAPHICS.button()
+                .id(5)
+                .area(checkbox)
+                .color(toolColor)
+                .label(GRAPHICS.label().text("CheckBox").centered(true).build(), true)
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        openSubscreen(new SettingComponentScreen(new ComponentConstructorHelper(GRAPHICS.checkbox()), this.area));
                     }
                 })
                 .build());
@@ -103,12 +129,12 @@ public class AddComponentScreen extends ComponentsListener {
         super.render(event.getPartialTick());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class})
     public void input(ScreenEvent.MouseInput event) {
         super.input(event);
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class})
     public void keyboard(ScreenEvent.Keyboard event) {
         super.keyboard(event);
     }

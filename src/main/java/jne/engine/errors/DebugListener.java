@@ -3,9 +3,11 @@ package jne.engine.errors;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.awt.*;
+
 @Data
 @RequiredArgsConstructor
-public class ErrorListener {
+public class DebugListener {
 
     private final Long initTime;
     private final Long lifeTime;
@@ -13,6 +15,6 @@ public class ErrorListener {
     private final String keyError;
     private final String fullError;
 
-
+    private final Color color;
 
 }

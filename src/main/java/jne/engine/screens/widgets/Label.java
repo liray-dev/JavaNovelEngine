@@ -3,7 +3,7 @@ package jne.engine.screens.widgets;
 import jne.engine.constants.Colors;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.Component;
-import jne.engine.screens.components.ComponentConstructor;
+import jne.engine.screens.components.constructor.ComponentConstructor;
 
 import java.awt.*;
 
@@ -27,7 +27,7 @@ public class Label<SELF extends Label<SELF>> extends Component<SELF> {
         }
     }
 
-    protected SELF self() {
+    public SELF self() {
         return (SELF) this;
     }
 

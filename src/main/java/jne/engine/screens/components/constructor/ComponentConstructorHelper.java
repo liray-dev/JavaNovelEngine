@@ -1,14 +1,16 @@
-package jne.engine.screens.components;
+package jne.engine.screens.components.constructor;
+
+import jne.engine.screens.components.Component;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-public class ComponentBuilderHelper {
+public class ComponentConstructorHelper {
 
     public final Component.Builder builder;
     public final HashMap<String, MethodConstructor> methodHashMap = new HashMap<>();
 
-    public ComponentBuilderHelper(Component.Builder object) {
+    public ComponentConstructorHelper(Component.Builder object) {
         this.builder = object;
         Class<?> clazz = object.getClass();
         Method[] methods = clazz.getMethods();

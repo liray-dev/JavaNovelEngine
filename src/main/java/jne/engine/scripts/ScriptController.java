@@ -1,6 +1,6 @@
 package jne.engine.scripts;
 
-import jne.engine.errors.ErrorManager;
+import jne.engine.errors.DebugManager;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -38,7 +38,7 @@ public class ScriptController {
                 this.factories.put(factory.getLanguageName().toLowerCase(), factory);
             }
         } catch (Exception e) {
-            ErrorManager.error(e);
+            DebugManager.error(e);
         }
     }
 

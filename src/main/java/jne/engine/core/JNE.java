@@ -1,6 +1,6 @@
 package jne.engine.core;
 
-import jne.engine.errors.ErrorManager;
+import jne.engine.errors.DebugManager;
 import jne.engine.events.types.TextureRegistryEvent;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.scripts.ScriptController;
@@ -15,7 +15,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -64,7 +63,7 @@ public class JNE implements ICore {
         try {
             this.init();
         } catch (Exception e) {
-            ErrorManager.error(e);
+            DebugManager.error(e);
         }
 
         WINDOW.changeOrtho();
@@ -74,7 +73,7 @@ public class JNE implements ICore {
                     this.loop();
                 }
             } catch (Exception e) {
-                ErrorManager.error(e);
+                DebugManager.error(e);
             } finally {
                 this.shutdown();
             }
@@ -152,7 +151,7 @@ public class JNE implements ICore {
 
         WINDOW.screenManager.render(this.timer.partialTick);
 
-        ErrorManager.render();
+        DebugManager.render();
         GL11.glDisable(GL11.GL_BLEND);
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);

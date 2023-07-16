@@ -1,6 +1,7 @@
-package jne.editor.components;
+package jne.editor.scenes;
 
 import jne.engine.constants.EventPriority;
+import jne.engine.constants.Hotkeys;
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
@@ -20,11 +21,13 @@ import static jne.engine.constants.Colors.clickedToolColor;
 
 public class FrameHandler extends ComponentsListener {
 
-    protected final int Z_LEVEL = -50;
+    protected final int Z_LEVEL = -500;
 
+    public final FrameStorage storage;
     public final SceneEditor sceneEditorScreen;
 
     public FrameHandler(SceneEditor sceneEditorScreen) {
+        this.storage = new FrameStorage(this);
         this.sceneEditorScreen = sceneEditorScreen;
     }
 
@@ -32,7 +35,7 @@ public class FrameHandler extends ComponentsListener {
 
     @Override
     public void init() {
-        int id = sceneEditorScreen.componentStore.getCurrentFrameID();
+        int id = storage.getCurrentFrameID();
 
         add(GRAPHICS.button()
                 .id(0)
@@ -42,7 +45,7 @@ public class FrameHandler extends ComponentsListener {
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         if (id - 1 < 0) return;
-                        sceneEditorScreen.componentStore.deleteFrame(sceneEditorScreen.componentStore.getCurrentFrameID());
+                        storage.deleteFrame(storage.getCurrentFrameID());
                         currentButton = component.id;
                         recreate();
                     }
@@ -57,7 +60,7 @@ public class FrameHandler extends ComponentsListener {
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         if (id - 1 < 0) return;
-                        sceneEditorScreen.componentStore.selectFrame(sceneEditorScreen.componentStore.getFrame(id - 1));
+                        storage.selectFrame(storage.getFrame(id - 1));
                         currentButton = component.id;
                         recreate();
                     }
@@ -80,12 +83,12 @@ public class FrameHandler extends ComponentsListener {
         add(GRAPHICS.button()
                 .id(3)
                 .area(new Area(135, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text(!sceneEditorScreen.componentStore.hasFrame(id + 1) ? "..." : String.valueOf(id + 1)).color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
+                .label(GRAPHICS.label().text(!storage.hasFrame(id + 1) ? "..." : String.valueOf(id + 1)).color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        if (!sceneEditorScreen.componentStore.hasFrame(id + 1)) return;
-                        sceneEditorScreen.componentStore.selectFrame(sceneEditorScreen.componentStore.getFrame(id + 1));
+                        if (!storage.hasFrame(id + 1)) return;
+                        storage.selectFrame(storage.getFrame(id + 1));
                         currentButton = component.id;
                         recreate();
                     }
@@ -99,12 +102,12 @@ public class FrameHandler extends ComponentsListener {
                 .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        if (sceneEditorScreen.componentStore.hasFrame(id + 1)) return;
-                        Frame plusFrame = sceneEditorScreen.componentStore.getFrame(id + 1);
+                        if (storage.hasFrame(id + 1)) return;
+                        Frame plusFrame = storage.getFrame(id + 1);
                         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                            plusFrame.setComponents(sceneEditorScreen.componentStore.getComponents().stream().map(Component::clone).collect(Collectors.toList()));
+                            plusFrame.setComponents(storage.getComponents().stream().map(Component::clone).collect(Collectors.toList()));
                         }
-                        sceneEditorScreen.componentStore.selectFrame(plusFrame);
+                        storage.selectFrame(plusFrame);
                         currentButton = component.id;
                         recreate();
                     }
@@ -144,11 +147,19 @@ public class FrameHandler extends ComponentsListener {
 
         int button = event.getButton();
 
-        if (button == Keyboard.KEY_LEFT) {
-            //DO
+        int id = storage.getCurrentFrameID();
+
+        if (button == Hotkeys.leftFrameKey) {
+            if (id - 1 < 0) return;
+            storage.selectFrame(storage.getFrame(id - 1));
+            currentButton = 1;
+            recreate();
         }
-        if (button == Keyboard.KEY_RIGHT) {
-            //DO
+        if (button == Hotkeys.rightFrameKey) {
+            if (!storage.hasFrame(id + 1)) return;
+            storage.selectFrame(storage.getFrame(id + 1));
+            currentButton = 3;
+            recreate();
         }
 
     }

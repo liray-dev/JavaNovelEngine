@@ -2,7 +2,7 @@ package jne.engine.screens.widgets;
 
 import jne.engine.constants.MouseClickType;
 import jne.engine.screens.components.Component;
-import jne.engine.screens.components.ComponentConstructor;
+import jne.engine.screens.components.constructor.ComponentConstructor;
 import jne.engine.texture.TextureContainer;
 
 import static jne.engine.constants.Colors.*;
@@ -29,7 +29,7 @@ public class CheckBox<SELF extends CheckBox<SELF>> extends Component<SELF> {
         this.flag = !this.flag;
     }
 
-    protected SELF self() {
+    public SELF self() {
         return (SELF) this;
     }
 

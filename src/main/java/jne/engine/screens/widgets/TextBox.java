@@ -2,10 +2,8 @@ package jne.engine.screens.widgets;
 
 import jne.engine.constants.KeyboardType;
 import jne.engine.screens.components.Component;
-import jne.engine.screens.components.ComponentConstructor;
+import jne.engine.screens.components.constructor.ComponentConstructor;
 import org.lwjgl.input.Keyboard;
-
-import java.awt.*;
 
 import static jne.engine.constants.Colors.*;
 
@@ -77,7 +75,7 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
         }
     }
 
-    protected SELF self() {
+    public SELF self() {
         return (SELF) this;
     }
 

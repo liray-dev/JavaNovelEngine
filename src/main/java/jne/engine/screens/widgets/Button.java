@@ -13,7 +13,7 @@ public class Button<SELF extends Button<SELF>> extends TexturedComponent<SELF> {
         }
     }
 
-    protected SELF self() {
+    public SELF self() {
         return (SELF) this;
     }
 

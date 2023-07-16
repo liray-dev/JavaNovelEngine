@@ -1,5 +1,6 @@
-package jne.editor.components;
+package jne.editor.scenes;
 
+import jne.editor.utils.EditingTypes;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.Hotkeys;
 import jne.engine.constants.MouseClickType;
@@ -10,7 +11,7 @@ import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.engine.texture.TextureContainer;
-import jne.editor.utils.EditingTypes;
+
 import java.util.List;
 
 import static jne.engine.constants.Colors.*;
@@ -19,7 +20,6 @@ public class SceneEditor extends ComponentsListener {
 
     protected final int Z_LEVEL = 0;
 
-    public final ComponentStore componentStore;
     public final FrameHandler frameHandler;
 
     public EditingTypes currentEditingType = EditingTypes.NONE;
@@ -27,10 +27,9 @@ public class SceneEditor extends ComponentsListener {
 
 
     public SceneEditor() {
-        this.componentStore = new ComponentStore(this);
         this.frameHandler = new FrameHandler(this);
-        EventListenerHelper.register(this.componentStore);
         EventListenerHelper.register(this.frameHandler);
+        EventListenerHelper.register(this.frameHandler.storage);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class SceneEditor extends ComponentsListener {
                     if (type == MouseClickType.CLICKED) {
                         openSubscreen(new AddComponentScreen());
                         currentButton = component.id;
-                        this.componentStore.selectComponent(null);
+                        this.frameHandler.storage.selectComponent(null);
                         recreate();
                     }
                 })
@@ -98,8 +97,8 @@ public class SceneEditor extends ComponentsListener {
 
     @Override
     public void close() {
-        EventListenerHelper.unregister(this.componentStore);
         EventListenerHelper.unregister(this.frameHandler);
+        EventListenerHelper.unregister(this.frameHandler.storage);
     }
 
     @Override
@@ -142,7 +141,7 @@ public class SceneEditor extends ComponentsListener {
         if (button == Hotkeys.addKey) {
             openSubscreen(new AddComponentScreen());
             currentButton = 3;
-            this.componentStore.selectComponent(null);
+            this.frameHandler.storage.selectComponent(null);
             recreate();
         }
     }
@@ -150,8 +149,8 @@ public class SceneEditor extends ComponentsListener {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        this.componentStore.resize(width, height);
         this.frameHandler.resize(width, height);
+        this.frameHandler.storage.resize(width, height);
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)

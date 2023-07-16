@@ -2,7 +2,7 @@ package jne.engine;
 
 import jne.engine.core.JNE;
 import jne.engine.utils.GameConfiguration;
-import jne.editor.components.SceneEditor;
+import jne.editor.scenes.SceneEditor;
 
 import java.io.File;
 import java.util.ArrayList;

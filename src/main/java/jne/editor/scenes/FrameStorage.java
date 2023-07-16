@@ -1,42 +1,37 @@
-package jne.editor.components;
+package jne.editor.scenes;
 
+import jne.editor.utils.EditingTypes;
+import jne.editor.utils.Frame;
+import jne.editor.utils.MovableComponent;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
+import jne.engine.errors.DebugManager;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.Component;
 import jne.engine.screens.listeners.ComponentsListener;
-import jne.engine.screens.widgets.Button;
-import jne.engine.screens.widgets.Label;
-import jne.engine.screens.widgets.TexturedComponent;
-import jne.editor.components.settings.SettingButtonScreen;
-import jne.editor.components.settings.SettingLabelScreen;
-import jne.editor.components.settings.SettingTextureScreen;
-import jne.editor.utils.EditingTypes;
-import jne.editor.utils.Frame;
-import jne.editor.utils.MovableComponent;
 import org.lwjgl.input.Keyboard;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ComponentStore extends ComponentsListener {
+public class FrameStorage extends ComponentsListener {
 
-    protected final int Z_LEVEL = -100;
+    protected final int Z_LEVEL = -1000;
 
     public final HashSet<Frame> frames = new HashSet<>();
-    public final SceneEditor sceneEditorScreen;
+    public final FrameHandler frameHandler;
 
     public Component lastClickedComponent = null;
 
     public int id = 0;
     public Frame currentFrame = new Frame(id);
-    public MovableComponent currentComponent = new MovableComponent(null);
+    public MovableComponent movableComponent = new MovableComponent(null);
 
-    public ComponentStore(SceneEditor sceneEditorScreen) {
-        this.sceneEditorScreen = sceneEditorScreen;
+    public FrameStorage(FrameHandler frameHandler) {
+        this.frameHandler = frameHandler;
         this.frames.add(currentFrame);
     }
 
@@ -52,18 +47,22 @@ public class ComponentStore extends ComponentsListener {
                 lastClickedComponent = c;
             }
         }).texture("exit").build());
-        add(GRAPHICS.button().area(area.offset(-100, -100)).color(14444444).onPress((c, t) -> {
-            if (t == MouseClickType.CLICKED) {
-                lastClickedComponent = c;
-            }
-        }).texture("zoom").build());
+        add(GRAPHICS.button()
+                .area(area.offset(-100, -100))
+                .color(14444444)
+                .onPress((c, t) -> {
+                    if (t == MouseClickType.CLICKED) {
+                        lastClickedComponent = c;
+                    }
+                })
+                .texture("zoom").build());
     }
 
     public void selectComponent(Component component) {
         if (component == null) {
             this.lastClickedComponent = null;
         }
-        this.currentComponent = new MovableComponent(component);
+        this.movableComponent = new MovableComponent(component);
     }
 
     public void selectFrame(Frame frame) {
@@ -135,40 +134,40 @@ public class ComponentStore extends ComponentsListener {
     }
 
     public EditingTypes getEditType() {
-        return sceneEditorScreen.currentEditingType;
+        return frameHandler.sceneEditorScreen.currentEditingType;
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void render(ScreenEvent.Render event) {
         super.render(event);
-        currentComponent.render(event);
+        movableComponent.render(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void input(ScreenEvent.MouseInput event) {
         super.input(event);
-        currentComponent.input(event);
+        movableComponent.input(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void clickMove(ScreenEvent.MouseClickMove event) {
         super.clickMove(event);
-        currentComponent.clickMove(event);
+        movableComponent.clickMove(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void move(ScreenEvent.MouseMove event) {
         super.move(event);
-        currentComponent.move(event);
+        movableComponent.move(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void tick(ScreenEvent.Tick event) {
         super.tick(event);
-        currentComponent.tick(event);
-        currentComponent.setType(getEditType());
+        movableComponent.tick(event);
+        movableComponent.setType(getEditType());
 
-        if (currentComponent.getComponent() == null && lastClickedComponent != null) {
+        if (movableComponent.getComponent() == null && lastClickedComponent != null) {
             this.selectComponent(lastClickedComponent);
             lastClickedComponent = null;
         }
@@ -189,43 +188,21 @@ public class ComponentStore extends ComponentsListener {
 
     @SubscribeEvent
     public void onCloseSubScreen(ScreenEvent.Close event) {
-        if (event.getScreen().getClass().equals(SettingButtonScreen.class)) {
-            SettingButtonScreen screen = (SettingButtonScreen) event.getScreen();
+        if (event.getScreen().getClass().equals(SettingComponentScreen.class)) {
+            SettingComponentScreen screen = (SettingComponentScreen) event.getScreen();
             if (screen.init) {
-                Button<? extends Button<?>> button = screen.button;
-                button.area.z = Z_LEVEL;
-                button.onPress = (component, type) -> {
+                Component<? extends Component<?>> component = screen.component;
+                component.area.z = Z_LEVEL;
+                component.onPress = (c, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        lastClickedComponent = component;
+                        lastClickedComponent = c;
                     }
                 };
-                add(button);
-            }
-        }
-        if (event.getScreen().getClass().equals(SettingLabelScreen.class)) {
-            SettingLabelScreen screen = (SettingLabelScreen) event.getScreen();
-            if (screen.init) {
-                Label<? extends Label<?>> label = screen.label;
-                label.area.z = Z_LEVEL;
-                label.onPress = (component, type) -> {
-                    if (type == MouseClickType.CLICKED) {
-                        lastClickedComponent = component;
-                    }
-                };
-                add(label);
-            }
-        }
-        if (event.getScreen().getClass().equals(SettingTextureScreen.class)) {
-            SettingTextureScreen screen = (SettingTextureScreen) event.getScreen();
-            if (screen.init) {
-                TexturedComponent<? extends TexturedComponent<?>> texture = screen.texture;
-                texture.area.z = Z_LEVEL;
-                texture.onPress = (component, type) -> {
-                    if (type == MouseClickType.CLICKED) {
-                        lastClickedComponent = component;
-                    }
-                };
-                add(texture);
+                add(component);
+
+                // Debug
+                String name = component.getClass().getSimpleName();
+                DebugManager.debug(name + " was added!");
             }
         }
     }

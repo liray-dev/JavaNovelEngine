@@ -75,7 +75,6 @@ public class Window implements ICore {
     public void updateDisplay() throws LWJGLException {
         Display.update();
         this.checkWindowResize();
-        setTitle(TITLE + ENGINE.debugFPS);
     }
 
     /**
@@ -159,7 +158,7 @@ public class Window implements ICore {
     public void changeOrtho() {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0, displayWidth, displayHeight, 0, -1000, 1000);
+        GL11.glOrtho(0, displayWidth, displayHeight, 0, -10000, 10000);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 

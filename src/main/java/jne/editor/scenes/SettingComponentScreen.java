@@ -1,14 +1,14 @@
-package jne.editor.components;
+package jne.editor.scenes;
 
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
-import jne.engine.errors.ErrorManager;
+import jne.engine.errors.DebugManager;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.Component;
-import jne.engine.screens.components.ComponentBuilderHelper;
-import jne.engine.screens.components.MethodConstructor;
+import jne.engine.screens.components.constructor.ComponentConstructorHelper;
+import jne.engine.screens.components.constructor.MethodConstructor;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.CheckBox;
 import jne.engine.screens.widgets.TextBox;
@@ -27,19 +27,38 @@ import static jne.engine.constants.Colors.*;
 public class SettingComponentScreen extends ComponentsListener {
 
     public boolean init = false;
-    protected final int Z_LEVEL = 30;
+    protected final int Z_LEVEL = 300;
     protected final HashMap<MethodConstructor, Component> builderComponents = new HashMap<>();
     protected boolean errored = false;
-    protected final ComponentBuilderHelper builderHelper;
+    protected final ComponentConstructorHelper builderHelper;
     protected final Area area;
 
-    public SettingComponentScreen(ComponentBuilderHelper builderHelper, Area area) {
+    public Component<? extends Component<?>> component;
+
+    public SettingComponentScreen(ComponentConstructorHelper builderHelper, Area area) {
         this.builderHelper = builderHelper;
         this.area = area;
     }
 
     public void collect() {
+        errored = false;
+        Component.Builder builder = builderHelper.builder;
+        Class<? extends Component.Builder> clazz = builder.getClass();
 
+        boolean build = build(clazz, builder);
+
+        if (build) {
+            init = true;
+
+            if (this.component != null) {
+                remove(this.component);
+            }
+
+            this.component = (Component<? extends Component<?>>) builder.build();
+            Area center = this.area.getCenter();
+            this.component.setArea(new Area(center.x - 100, center.y - 100, Z_LEVEL, 200, 200));
+            add(this.component);
+        }
     }
 
     public boolean build(Class<? extends Component.Builder> clazz, Component.Builder<? extends Component.Builder<?, ?>, ? extends Component<?>> builder) {
@@ -75,7 +94,7 @@ public class SettingComponentScreen extends ComponentsListener {
             }
         } catch (Exception e) {
             errored = true;
-            ErrorManager.error(e);
+            DebugManager.error(e);
             return false;
         }
 
@@ -173,12 +192,12 @@ public class SettingComponentScreen extends ComponentsListener {
         render(partialTick);
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class, AddComponentScreen.class})
     public void move(ScreenEvent.MouseMove event) {
         this.mouseMove(event.getMouseX(), event.getMouseY());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class, AddComponentScreen.class})
     public void input(ScreenEvent.MouseInput event) {
         MouseClickType type = event.getType();
         if (type == MouseClickType.CLICKED) {
@@ -189,12 +208,12 @@ public class SettingComponentScreen extends ComponentsListener {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class, AddComponentScreen.class})
     public void keyboard(ScreenEvent.Keyboard event) {
         this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, ComponentStore.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class})
     public void tick(ScreenEvent.Tick event) {
         super.tick(event);
     }

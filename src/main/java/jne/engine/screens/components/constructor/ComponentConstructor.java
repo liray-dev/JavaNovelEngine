@@ -1,5 +1,6 @@
-package jne.engine.screens.components;
+package jne.engine.screens.components.constructor;
 
+import jne.engine.screens.components.Component;
 import jne.engine.screens.widgets.TextBox;
 
 import java.lang.annotation.Retention;

@@ -11,7 +11,11 @@ public class Colors {
 
     public static final Color trueColor = new Color(0xFF88B781, true);
     public static final Color falseColor = new Color(0xB78181);
-    
+
+
+    public static final Color errorColor = new Color(0xB78181);
+    public static final Color debugColor = new Color(0x81A4B7);
+
     public static final Color textColor = new Color(0xFFFFFF);
     public static final Color ghostColor = new Color(0x969696);
 

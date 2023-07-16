@@ -8,13 +8,13 @@ import jne.engine.texture.TextureContainer;
 import java.awt.*;
 
 
-public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Component<SELF> {
+public class Panel<SELF extends Panel<SELF>> extends Component<SELF> {
 
     public Texture texture;
     public Color color;
     public float alpha;
 
-    protected TexturedComponent() {
+    protected Panel() {
         this.color = Color.WHITE;
         this.alpha = 1F;
     }
@@ -36,11 +36,11 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
         return (SELF) this;
     }
 
-    public static class Builder<SELF extends Builder<SELF, T>, T extends TexturedComponent<T>> extends Component.Builder<SELF, T> {
+    public static class Builder<SELF extends Builder<SELF, T>, T extends Panel<T>> extends Component.Builder<SELF, T> {
 
         @Override
         public T create() {
-            return (T) new TexturedComponent();
+            return (T) new Panel();
         }
 
         public SELF texture(Texture texture) {

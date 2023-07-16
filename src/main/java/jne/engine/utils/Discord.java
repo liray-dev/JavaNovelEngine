@@ -8,7 +8,7 @@ public class Discord {
 
     public static DiscordRPC instance = DiscordRPC.INSTANCE;
     public static Long startTimestamp = System.currentTimeMillis() / 1000;
-    public static String state = "Scene Editor";
+    public static String state = "Editor";
     public static String details = "Java Novel Engine";
     public static String largeImageKey = "logo";
     public static String largeImageText = "https://discord.gg/K5n6XeMnVU";

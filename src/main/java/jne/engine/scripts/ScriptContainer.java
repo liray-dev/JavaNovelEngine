@@ -1,7 +1,7 @@
 package jne.engine.scripts;
 
 import jne.engine.constants.EnumScriptType;
-import jne.engine.errors.ErrorManager;
+import jne.engine.errors.DebugManager;
 import jne.engine.events.types.Event;
 
 import javax.script.Invocable;
@@ -70,7 +70,7 @@ public class ScriptContainer {
                 this.unknownFunctions.add(type);
             } catch (Exception e) {
                 this.errored = true;
-                ErrorManager.error(e);
+                DebugManager.error(e);
             } finally {
                 this.appandConsole(sw.getBuffer().toString().trim());
                 pw.close();

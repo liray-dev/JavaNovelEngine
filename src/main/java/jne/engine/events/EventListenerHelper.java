@@ -1,11 +1,10 @@
 package jne.engine.events;
 
-import jne.engine.errors.ErrorManager;
+import jne.engine.errors.DebugManager;
 import jne.engine.events.types.Event;
 import jne.engine.events.utils.EventListener;
 import jne.engine.events.utils.SubscribeEvent;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -72,7 +71,7 @@ public class EventListenerHelper {
                     }
                 }
             } catch (IllegalAccessException e) {
-                ErrorManager.error(e);
+                DebugManager.error(e);
             }
         });
 

@@ -4,10 +4,8 @@ package jne.engine.screens.components;
 import jne.engine.constants.EnumScriptType;
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
-import jne.engine.errors.ErrorListener;
-import jne.engine.errors.ErrorManager;
+import jne.engine.errors.DebugManager;
 import jne.engine.events.types.ScriptEvent;
-import jne.engine.screens.widgets.Button;
 import jne.engine.scripts.ScriptContainer;
 import jne.engine.utils.*;
 
@@ -238,12 +236,12 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             clone.setArea(area.clone());
             return clone;
         } catch (CloneNotSupportedException e) {
-            ErrorManager.error(e);
+            DebugManager.error(e);
         }
         return null;
     }
 
-    protected SELF self() {
+    public SELF self() {
         return (SELF) this;
     }
 
@@ -253,7 +251,7 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             return (T) new Component();
         }
 
-        @ComponentConstructor(text = "ID", example = "example: 1")
+        
         public SELF id(int id) {
             instance().id = id;
             return self();
@@ -269,7 +267,6 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
             return self();
         }
 
-        @ComponentConstructor(text = "Script", example = "example: code...")
         public SELF script(String code) {
             instance().scriptContainer.script = code;
             return self();

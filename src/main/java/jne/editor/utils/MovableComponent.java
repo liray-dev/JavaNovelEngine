@@ -34,7 +34,7 @@ public class MovableComponent implements IWrapper {
         if (component == null) return;
 
         boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
-        Area area = component.area;
+        Area area = component.getArea();
 
         RENDER.drawOutline(area);
 
@@ -96,9 +96,9 @@ public class MovableComponent implements IWrapper {
         int mouseY = event.getMouseY();
 
         if (event.getType() == MouseClickType.CLICKED) {
-            direction = component.area.direction(mouseX, mouseY);
-            mouseOffsetX = (int) (mouseX - component.area.x);
-            mouseOffsetY = (int) (mouseY - component.area.y);
+            direction = component.getArea().direction(mouseX, mouseY);
+            mouseOffsetX = (int) (mouseX - component.getArea().x);
+            mouseOffsetY = (int) (mouseY - component.getArea().y);
         }
     }
 
@@ -111,29 +111,29 @@ public class MovableComponent implements IWrapper {
         this.mouseX = mouseX;
         this.mouseY = mouseY;
 
-        if (!component.area.onArea(mouseX, mouseY, 100, 100)) return;
+        if (!component.getArea().onArea(mouseX, mouseY, 100, 100)) return;
 
         if (mouseOffsetX == 0 && mouseOffsetY == 0) {
-            mouseOffsetX = (int) (mouseX - component.area.x);
-            mouseOffsetY = (int) (mouseY - component.area.y);
+            mouseOffsetX = (int) (mouseX - component.getArea().x);
+            mouseOffsetY = (int) (mouseY - component.getArea().y);
         }
 
         if (type == EditingTypes.MOVE) {
 
-            component.area.move(mouseX, mouseY, mouseOffsetX, mouseOffsetY);
+            component.getArea().move(mouseX, mouseY, mouseOffsetX, mouseOffsetY);
         }
         if (type == EditingTypes.RESIZE) {
 
             if (component instanceof Label) {
-                ((Label<?>) component).size = resizeText(((Label<?>) component).size, component.area, mouseX, mouseY, mouseOffsetX, mouseOffsetY);
+                ((Label<?>) component).size = resizeText(((Label<?>) component).size, component.getArea(), mouseX, mouseY, mouseOffsetX, mouseOffsetY);
                 return;
             }
 
             if (direction == null) {
-                direction = component.area.direction(mouseX, mouseY);
+                direction = component.getArea().direction(mouseX, mouseY);
             }
 
-            component.area.resize(direction, mouseX, mouseY);
+            component.getArea().resize(direction, mouseX, mouseY);
         }
     }
 
@@ -149,7 +149,7 @@ public class MovableComponent implements IWrapper {
     public void tick(ScreenEvent.Tick event) {
         if (component == null) return;
 
-        if (this.component.area.onArea(mouseX, mouseY)) {
+        if (this.component.getArea().onArea(mouseX, mouseY)) {
             tooltipTicks++;
             if (tooltipTicks >= 20) {
                 tooltipTicks = 0;

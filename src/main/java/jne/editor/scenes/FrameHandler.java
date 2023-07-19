@@ -11,6 +11,7 @@ import jne.engine.screens.components.Component;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.editor.utils.Frame;
+import jne.engine.utils.IComponent;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -31,14 +32,14 @@ public class FrameHandler extends ComponentsListener {
         this.sceneEditorScreen = sceneEditorScreen;
     }
 
-    public int currentButton = Integer.MIN_VALUE;
+    public String currentButton = "";
 
     @Override
     public void init() {
         int id = storage.getCurrentFrameID();
 
         add(GRAPHICS.button()
-                .id(0)
+                .id("minus")
                 .area(new Area(60, height - 25, Z_LEVEL, 25, 25))
                 .label(GRAPHICS.label().text("-").color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
@@ -46,14 +47,14 @@ public class FrameHandler extends ComponentsListener {
                     if (type == MouseClickType.CLICKED) {
                         if (id - 1 < 0) return;
                         storage.deleteFrame(storage.getCurrentFrameID());
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .id(1)
+                .id("left")
                 .area(new Area(85, height - 25, Z_LEVEL, 25, 25))
                 .label(GRAPHICS.label().text(id - 1 < 0 ? "..." : String.valueOf(id - 1)).color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
@@ -61,27 +62,27 @@ public class FrameHandler extends ComponentsListener {
                     if (type == MouseClickType.CLICKED) {
                         if (id - 1 < 0) return;
                         storage.selectFrame(storage.getFrame(id - 1));
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .id(2)
+                .id("current")
                 .area(new Area(110, height - 25, Z_LEVEL, 25, 25))
                 .label(GRAPHICS.label().text(String.valueOf(id)).color(clickedToolColor.brighter().brighter().brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .id(3)
+                .id("right")
                 .area(new Area(135, height - 25, Z_LEVEL, 25, 25))
                 .label(GRAPHICS.label().text(!storage.hasFrame(id + 1) ? "..." : String.valueOf(id + 1)).color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
@@ -89,14 +90,14 @@ public class FrameHandler extends ComponentsListener {
                     if (type == MouseClickType.CLICKED) {
                         if (!storage.hasFrame(id + 1)) return;
                         storage.selectFrame(storage.getFrame(id + 1));
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .id(4)
+                .id("plus")
                 .area(new Area(160, height - 25, Z_LEVEL, 25, 25))
                 .label(GRAPHICS.label().text("+").color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
@@ -105,10 +106,15 @@ public class FrameHandler extends ComponentsListener {
                         if (storage.hasFrame(id + 1)) return;
                         Frame plusFrame = storage.getFrame(id + 1);
                         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                            plusFrame.setComponents(storage.getComponents().stream().map(Component::clone).collect(Collectors.toList()));
+                            plusFrame.setComponents(storage.getComponents().stream().map(it -> {
+                                if (it instanceof Component) {
+                                    return ((Component<?>) it).clone();
+                                }
+                                return null;
+                            }).collect(Collectors.toList()));
                         }
                         storage.selectFrame(plusFrame);
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
@@ -152,13 +158,13 @@ public class FrameHandler extends ComponentsListener {
         if (button == Hotkeys.leftFrameKey) {
             if (id - 1 < 0) return;
             storage.selectFrame(storage.getFrame(id - 1));
-            currentButton = 1;
+            currentButton = "left";
             recreate();
         }
         if (button == Hotkeys.rightFrameKey) {
             if (!storage.hasFrame(id + 1)) return;
             storage.selectFrame(storage.getFrame(id + 1));
-            currentButton = 3;
+            currentButton = "right";
             recreate();
         }
 

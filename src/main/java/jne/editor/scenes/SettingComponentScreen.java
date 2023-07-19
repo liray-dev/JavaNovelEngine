@@ -105,7 +105,6 @@ public class SettingComponentScreen extends ComponentsListener {
     public void init() {
         isInit = true;
         add(GRAPHICS.button()
-                .id(0)
                 .area(new Area(area.x2 - 55, area.y + 5, Z_LEVEL, 50, 50))
                 .texture(TextureContainer.get("exit"))
                 .color(toolColor)
@@ -117,7 +116,6 @@ public class SettingComponentScreen extends ComponentsListener {
                 .build());
 
         add(GRAPHICS.button()
-                .id(0)
                 .area(new Area(area.x2 - 155, area.y2 - 55, Z_LEVEL, 150, 50))
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Preview").centered(true).build(), true)
@@ -130,7 +128,6 @@ public class SettingComponentScreen extends ComponentsListener {
 
 
         add(GRAPHICS.button()
-                .id(0)
                 .area(new Area(area.x2 - 310, area.y2 - 55, Z_LEVEL, 150, 50))
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Push").centered(true).build(), true)
@@ -145,7 +142,6 @@ public class SettingComponentScreen extends ComponentsListener {
                 .build());
 
         add(GRAPHICS.button()
-                .id(0)
                 .area(new Area(area.x2 - 465, area.y2 - 55, Z_LEVEL, 150, 50))
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Scripting").centered(true).build(), true)

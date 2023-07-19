@@ -1,6 +1,6 @@
 package jne.engine.utils;
 
-import jne.engine.renderer.Graphics;
+import jne.engine.screens.Graphics;
 import jne.engine.renderer.RenderHelper;
 import jne.engine.renderer.Tessellator;
 import jne.engine.renderer.buffer.BufferBuilder;

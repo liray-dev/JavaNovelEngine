@@ -8,18 +8,28 @@ import jne.engine.errors.DebugManager;
 import jne.engine.events.types.ScriptEvent;
 import jne.engine.scripts.ScriptContainer;
 import jne.engine.utils.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Component<SELF extends Component<SELF>> implements IComponentsListener, IComponent, IWrapper, Cloneable {
+import java.util.UUID;
 
-    public int id;
-    public Area area;
-    public ScriptContainer scriptContainer;
+public class Component<SELF extends Component<SELF>> implements IComponent, IWrapper {
+
+    protected String id;
+    protected Area area;
+    protected float depth;
+    protected ScriptContainer scriptContainer;
 
     protected int mouseX, mouseY;
 
     protected boolean active;
     protected boolean visible;
     protected boolean focused;
+
+    protected boolean markDirty = false;
+
+    @Nullable
+    protected IComponent parent;
 
     protected boolean isTooltip = false;
     protected int ticks = 0;
@@ -29,13 +39,13 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     public ITooltip<SELF> onTooltip;
 
     protected Component() {
-        this.id = -1;
+        this.id = UUID.randomUUID().toString();
         this.area = new Area();
+        this.depth = area.z;
         this.scriptContainer = new ScriptContainer();
         this.visible = true;
         this.active = false;
         this.focused = false;
-
     }
 
     /*
@@ -48,7 +58,7 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     @Override
     final public void render(float partialTicks) {
-        if (this.visible) {
+        if (visible()) {
             onRender(partialTicks);
 
             if (onTooltip != null && this.focused) {
@@ -59,8 +69,8 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     @Override
     final public void mouseMove(int mouseX, int mouseY) {
-        if (this.visible) {
-            this.focused = checkFocus(mouseX, mouseY);
+        if (visible()) {
+            focused = checkFocus(mouseX, mouseY);
             if (this.focused) {
                 onFocused(mouseX, mouseY);
                 if (isTooltip) {
@@ -77,8 +87,8 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     @Override
     final public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (this.visible) {
-            boolean focused = checkFocus(mouseX, mouseY);
+        if (visible()) {
+            focused = checkFocus(mouseX, mouseY);
             if (focused) {
                 this.active = true;
                 onClicked(mouseX, mouseY, mouseButton, MouseClickType.CLICKED);
@@ -107,8 +117,8 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     @Override
     final public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
-        if (this.visible) {
-            boolean focused = checkFocus(mouseX, mouseY);
+        if (visible()) {
+            focused = checkFocus(mouseX, mouseY);
             if (focused) {
                 this.active = true;
                 onClicked(mouseX, mouseY, mouseButton, MouseClickType.RELEASED);
@@ -128,8 +138,8 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     @Override
     final public void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
-        if (this.visible) {
-            boolean focused = checkFocus(mouseX, mouseY);
+        if (visible()) {
+            focused = checkFocus(mouseX, mouseY);
             if (focused) {
                 this.active = true;
                 onMoveClick(mouseX, mouseY, mouseButton, timeSinceLastClick);
@@ -149,7 +159,7 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     @Override
     final public void keyTyped(char typedChar, int keyCode, KeyboardType type) {
-        if (this.visible && this.active) {
+        if (visible() && this.active) {
             onKeyTyped(keyCode, typedChar, type);
         }
     }
@@ -172,12 +182,82 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
         scriptContainer.run(EnumScriptType.UPDATE, update);
         update.post();
 
+        if (checkUpdates()) {
+            this.markDirty = false;
+            update();
+        }
+
         onTick();
     }
 
     @Override
-    final public void setVisibility(boolean visibility) {
+    public String getID() {
+        return id;
+    }
+
+    @Override
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean visible() {
+        return visible;
+    }
+
+    @Override
+    public void setVisibility(boolean visibility) {
         this.visible = visibility;
+    }
+
+    @Override
+    public float getAbsoluteX() {
+        return area.x2;
+    }
+
+    @Override
+    public float getX() {
+        return area.x;
+    }
+
+    @Override
+    public void setX(float x) {
+        area.move(x, area.y, 0, 0);
+    }
+
+    @Override
+    public float getAbsoluteY() {
+        return area.y2;
+    }
+
+    @Override
+    public float getY() {
+        return area.y;
+    }
+
+    @Override
+    public void setY(float y) {
+        this.area.move(area.x, y, 0, 0);
+    }
+
+    @Override
+    public float getWidth() {
+        return area.width;
+    }
+
+    @Override
+    public void setWidth(float width) {
+        area.width = width;
+    }
+
+    @Override
+    public float getHeight() {
+        return area.height;
+    }
+
+    @Override
+    public void setHeight(float height) {
+        area.height = height;
     }
 
     @Override
@@ -186,10 +266,120 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
     }
 
     @Override
+    public int getDepth() {
+        return (int) depth;
+    }
+
+    @Override
+    public void setDepth(int value) {
+        this.depth = value;
+        this.area.z = value;
+    }
+
+    @Override
+    public void markDirty() {
+        this.markDirty = true;
+    }
+
+    @Override
     final public Area getArea() {
         return this.area;
     }
 
+    @Override
+    public boolean checkUpdates() {
+        return markDirty;
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public @Nullable IComponent getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(@NotNull IComponent component) {
+        this.parent = component;
+    }
+
+    @Override
+    public String getScript() {
+        return scriptContainer.script;
+    }
+
+    @Override
+    public void setScript(String script) {
+        scriptContainer.script = script;
+    }
+
+    @Override
+    public ScriptContainer getScriptContainer() {
+        return scriptContainer;
+    }
+
+    public SELF self() {
+        return (SELF) this;
+    }
+
+    public static class Builder<SELF extends Builder<SELF, T>, T extends Component<T>> extends ComponentBuilder<SELF, T> {
+
+        protected T create() {
+            return (T) new Component();
+        }
+
+        public SELF id(String id) {
+            instance().id = id;
+            return self();
+        }
+
+        public SELF visible(boolean flag) {
+            instance().visible = flag;
+            return self();
+        }
+
+        public SELF depth(int depth) {
+            instance().depth = depth;
+            instance().area.z = depth;
+            return self();
+        }
+
+        public SELF area(Area area) {
+            instance().area = area;
+            instance().depth = area.z;
+            return self();
+        }
+
+        public SELF script(String code) {
+            instance().scriptContainer.script = code;
+            return self();
+        }
+
+        public SELF scriptContainer(ScriptContainer container) {
+            instance().scriptContainer = container;
+            return self();
+        }
+
+        public SELF onPress(IPressable<T> onPress) {
+            instance().onPress = onPress;
+            return self();
+        }
+
+        public SELF onFailPress(IPressable<T> onFailPress) {
+            instance().onFailPress = onFailPress;
+            return self();
+        }
+
+        public SELF onTooltip(ITooltip<T> onTooltip) {
+            instance().onTooltip = onTooltip;
+            return self();
+        }
+
+
+    }
     /*
         Overwrite realization
      */
@@ -229,69 +419,15 @@ public class Component<SELF extends Component<SELF>> implements IComponentsListe
 
     }
 
-    @Override
-    public Component clone() {
+    public IComponent clone() {
         try {
-            Component clone = (Component) super.clone();
+            IComponent clone = (IComponent) super.clone();
             clone.setArea(area.clone());
             return clone;
         } catch (CloneNotSupportedException e) {
             DebugManager.error(e);
         }
         return null;
-    }
-
-    public SELF self() {
-        return (SELF) this;
-    }
-
-    public static class Builder<SELF extends Builder<SELF, T>, T extends Component<T>> extends ComponentBuilder<SELF, T> {
-
-        protected T create() {
-            return (T) new Component();
-        }
-
-        
-        public SELF id(int id) {
-            instance().id = id;
-            return self();
-        }
-
-        public SELF visible(boolean flag) {
-            instance().visible = flag;
-            return self();
-        }
-
-        public SELF area(Area area) {
-            instance().area = area;
-            return self();
-        }
-
-        public SELF script(String code) {
-            instance().scriptContainer.script = code;
-            return self();
-        }
-
-        public SELF scriptContainer(ScriptContainer container) {
-            instance().scriptContainer = container;
-            return self();
-        }
-
-        public SELF onPress(IPressable<T> onPress) {
-            instance().onPress = onPress;
-            return self();
-        }
-
-        public SELF onFailPress(IPressable<T> onFailPress) {
-            instance().onFailPress = onFailPress;
-            return self();
-        }
-
-        public SELF onTooltip(ITooltip<T> onTooltip) {
-            instance().onTooltip = onTooltip;
-            return self();
-        }
-
     }
 
 }

@@ -1,4 +1,4 @@
-package jne.engine.renderer;
+package jne.engine.screens;
 
 import jne.engine.screens.components.Component;
 import jne.engine.screens.widgets.*;
@@ -29,6 +29,10 @@ public class Graphics {
 
     public TextBox.Builder<? extends TextBox.Builder<?, ?>, ? extends TextBox<?>> textbox() {
         return new TextBox.Builder<>();
+    }
+
+    public Panel.Builder<? extends Panel.Builder<?, ?>, ? extends Panel<?>> panel() {
+        return new Panel.Builder<>();
     }
 
     public <T extends Component.Builder<T, E>, E extends Component<E>> T getBuilder(Class<T> builderClass) {

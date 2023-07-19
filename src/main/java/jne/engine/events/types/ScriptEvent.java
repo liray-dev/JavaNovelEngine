@@ -1,6 +1,7 @@
 package jne.engine.events.types;
 
 import jne.engine.screens.components.Component;
+import jne.engine.utils.IComponent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,7 +11,7 @@ public class ScriptEvent {
     @Data
     public static class Init extends Event {
 
-        private final Component component;
+        private final IComponent component;
 
     }
 
@@ -18,7 +19,7 @@ public class ScriptEvent {
     @Data
     public static class Tooltip extends Event {
 
-        private final Component component;
+        private final IComponent component;
 
     }
 
@@ -26,7 +27,7 @@ public class ScriptEvent {
     @Data
     public static class Update extends Event {
 
-        private final Component component;
+        private final IComponent component;
 
     }
 
@@ -34,7 +35,7 @@ public class ScriptEvent {
     @Data
     public static class Press extends Event {
 
-        private final Component component;
+        private final IComponent component;
 
     }
 
@@ -42,7 +43,7 @@ public class ScriptEvent {
     @Data
     public static class FailPress extends Event {
 
-        private final Component component;
+        private final IComponent component;
 
     }
 

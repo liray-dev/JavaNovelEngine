@@ -23,7 +23,7 @@ public class SceneEditor extends ComponentsListener {
     public final FrameHandler frameHandler;
 
     public EditingTypes currentEditingType = EditingTypes.NONE;
-    public int currentButton = Integer.MIN_VALUE;
+    public String currentButton = "";
 
 
     public SceneEditor() {
@@ -35,56 +35,56 @@ public class SceneEditor extends ComponentsListener {
     @Override
     public void init() {
         add(GRAPHICS.button()
-                .id(0)
+                .id("move")
                 .area(new Area(5, 5, Z_LEVEL, 50, 50))
                 .texture(TextureContainer.get("move"))
                 .color(toolColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         currentEditingType = EditingTypes.MOVE;
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .id(1)
+                .id("resize")
                 .area(new Area(5, 60, Z_LEVEL, 50, 50))
                 .texture(TextureContainer.get("resize"))
                 .color(toolColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         currentEditingType = EditingTypes.RESIZE;
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .id(2)
+                .id("zoom")
                 .area(new Area(5, 115, Z_LEVEL, 50, 50))
                 .texture(TextureContainer.get("zoom"))
                 .color(toolColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         currentEditingType = EditingTypes.ZOOM;
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         recreate();
                     }
                 })
                 .build());
 
         add(GRAPHICS.button()
-                .id(3)
+                .id("add")
                 .area(new Area(5, 170, Z_LEVEL, 50, 50))
                 .texture(TextureContainer.get("add"))
                 .color(toolColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         openSubscreen(new AddComponentScreen());
-                        currentButton = component.id;
+                        currentButton = component.getID();
                         this.frameHandler.storage.selectComponent(null);
                         recreate();
                     }
@@ -125,22 +125,22 @@ public class SceneEditor extends ComponentsListener {
         int button = event.getButton();
         if (button == Hotkeys.moveKey) {
             currentEditingType = EditingTypes.MOVE;
-            currentButton = 0;
+            currentButton = "move";
             recreate();
         }
         if (button == Hotkeys.resizeKey) {
             currentEditingType = EditingTypes.RESIZE;
-            currentButton = 1;
+            currentButton = "resize";
             recreate();
         }
         if (button == Hotkeys.zoomKey) {
             currentEditingType = EditingTypes.ZOOM;
-            currentButton = 2;
+            currentButton = "zoom";
             recreate();
         }
         if (button == Hotkeys.addKey) {
             openSubscreen(new AddComponentScreen());
-            currentButton = 3;
+            currentButton = "add";
             this.frameHandler.storage.selectComponent(null);
             recreate();
         }

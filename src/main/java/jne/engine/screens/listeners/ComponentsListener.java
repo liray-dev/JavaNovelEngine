@@ -6,6 +6,7 @@ import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.types.ScriptEvent;
 import jne.engine.screens.components.Component;
+import jne.engine.utils.IComponent;
 import jne.engine.utils.IComponentsListener;
 import jne.engine.utils.IWrapper;
 
@@ -64,7 +65,7 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
 
     @Override
     final public void tick() {
-        getComponents().forEach(Component::tick);
+        getComponents().forEach(IComponent::tick);
     }
 
     public void resize(int width, int height) {
@@ -99,27 +100,27 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
 
     /* Components management */
 
-    private final List<Component> components = new ArrayList<Component>();
+    private final List<IComponent> components = new ArrayList<>();
 
-    final public <T extends Component> T add(T component) {
+    final public <T extends IComponent> T add(T component) {
         components.add(component);
 
-        ScriptEvent.Init init = new ScriptEvent.Init(component);
-        component.scriptContainer.run(EnumScriptType.INIT, init);
+        ScriptEvent.Init init = new ScriptEvent.Init((Component) component);
+        component.getScriptContainer().run(EnumScriptType.INIT, init);
         init.post();
         return component;
     }
 
-    final public <T extends Component> void remove(T component) {
+    final public <T extends IComponent> void remove(T component) {
         components.remove(component);
 
     }
 
-    final public void setComponents(List<Component> list) {
+    final public void setComponents(List<IComponent> list) {
         this.components.addAll(list);
     }
 
-    final public List<Component> getComponents() {
+    final public List<IComponent> getComponents() {
         return new ArrayList<>(components);
     }
 
@@ -127,28 +128,27 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
         this.components.clear();
     }
 
-    final public <T extends Component> List<T> getComponentsByType(Class<T> componentType) {
+    final public <T extends IComponent> List<T> getComponentsByType(Class<T> componentType) {
         return components.stream()
                 .filter(componentType::isInstance)
                 .map(c -> (T) c)
                 .collect(Collectors.toList());
     }
 
-    final public <T extends Component> List<T> getComponentsByID(int id, Class<T> componentType) {
+    final public <T extends IComponent> List<T> getComponentsByID(String id, Class<T> componentType) {
         return components.stream()
                 .filter(componentType::isInstance)
-                .filter(it -> it.id == id)
+                .filter(it -> it.getID().equals(id))
                 .map(c -> (T) c)
                 .collect(Collectors.toList());
     }
 
-    final public <T extends Component> List<T> getComponentsByID(int id) {
+    final public <T extends IComponent> List<T> getComponentsByID(String id) {
         return components.stream()
-                .filter(it -> it.id == id)
+                .filter(it -> it.getID().equals(id))
                 .map(c -> (T) c)
                 .collect(Collectors.toList());
     }
-
 
     public void render(ScreenEvent.Render event) {
         render(event.getPartialTick());

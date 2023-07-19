@@ -46,7 +46,7 @@ public class Area implements Cloneable {
         // Just crutch
     }
 
-    public void move(int mouseX, int mouseY, int offsetX, int offsetY) {
+    public void move(float mouseX, float mouseY, int offsetX, int offsetY) {
         float deltaX = mouseX - (x + offsetX);
         float deltaY = mouseY - (y + offsetY);
         this.x += deltaX;
@@ -63,7 +63,7 @@ public class Area implements Cloneable {
         this.y2 = y + height;
     }
 
-    public void resize(Direction direction, int mouseX, int mouseY) {
+    public void resize(Direction direction, float mouseX, float mouseY) {
         boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 
         switch (direction) {

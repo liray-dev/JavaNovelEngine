@@ -7,6 +7,7 @@ import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.constructor.ComponentConstructorHelper;
 import jne.engine.screens.listeners.ComponentsListener;
+import jne.engine.screens.widgets.Panel;
 import jne.engine.texture.TextureContainer;
 
 import java.awt.*;
@@ -20,15 +21,19 @@ public class AddComponentScreen extends ComponentsListener {
 
     private Area area = new Area();
 
+    Panel panel;
+
     @Override
     public void init() {
+
+
+
         int width = WINDOW.desktop.getWidth();
         int height = WINDOW.desktop.getHeight();
 
         this.area = new Area(120, 120, width - 120, height - 120, Z_LEVEL, false);
 
         add(GRAPHICS.button()
-                .id(0)
                 .area(new Area(area.x2 - 55, area.y + 5, Z_LEVEL, 50, 50))
                 .texture(TextureContainer.get("exit"))
                 .color(toolColor)
@@ -48,7 +53,6 @@ public class AddComponentScreen extends ComponentsListener {
 
         Area button = new Area(area.x + 10, area.y + 20, Z_LEVEL, 150, 50);
         add(GRAPHICS.button()
-                .id(1)
                 .area(button)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Button").centered(true).build(), true)
@@ -62,7 +66,6 @@ public class AddComponentScreen extends ComponentsListener {
         Area label = button.offset(-150, 5);
 
         add(GRAPHICS.button()
-                .id(2)
                 .area(label)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Label").centered(true).build(), true)
@@ -76,7 +79,6 @@ public class AddComponentScreen extends ComponentsListener {
         Area texture = label.offset(-150, 5);
 
         add(GRAPHICS.button()
-                .id(3)
                 .area(texture)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("Texture").centered(true).build(), true)
@@ -90,7 +92,6 @@ public class AddComponentScreen extends ComponentsListener {
         Area textbox = texture.offset(-150, 5);
 
         add(GRAPHICS.button()
-                .id(4)
                 .area(textbox)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("TextBox").centered(true).build(), true)
@@ -104,7 +105,6 @@ public class AddComponentScreen extends ComponentsListener {
         Area checkbox = textbox.offset(-150, 5);
 
         add(GRAPHICS.button()
-                .id(5)
                 .area(checkbox)
                 .color(toolColor)
                 .label(GRAPHICS.label().text("CheckBox").centered(true).build(), true)

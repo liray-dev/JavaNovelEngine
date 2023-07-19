@@ -192,7 +192,7 @@ public class FrameStorage extends ComponentsListener {
             SettingComponentScreen screen = (SettingComponentScreen) event.getScreen();
             if (screen.init) {
                 Component<? extends Component<?>> component = screen.component;
-                component.area.z = Z_LEVEL;
+                component.getArea().z = Z_LEVEL;
                 component.onPress = (c, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         lastClickedComponent = c;

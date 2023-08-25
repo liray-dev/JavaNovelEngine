@@ -2,7 +2,7 @@ package jne.engine.errors;
 
 import jne.engine.screens.components.Area;
 import jne.engine.screens.widgets.Label;
-import jne.engine.utils.IWrapper;
+import jne.engine.api.IWrapper;
 import jne.engine.utils.Util;
 
 import java.awt.*;
@@ -44,6 +44,10 @@ public class DebugManager implements IWrapper {
 
     public static void debug(String message) {
         debug(message, maxLifeTime);
+    }
+
+    public static void debug(String message, Color color) {
+        debug(message, maxLifeTime, color);
     }
 
     public static void debug(String message, Long lifeTime) {

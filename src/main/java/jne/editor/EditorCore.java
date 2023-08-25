@@ -6,7 +6,7 @@ import jne.engine.events.utils.Novel;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.texture.Texture;
 import jne.engine.texture.TextureContainer;
-import jne.engine.utils.IWrapper;
+import jne.engine.api.IWrapper;
 import jne.engine.utils.ResourceLocation;
 
 @Novel
@@ -21,6 +21,8 @@ public class EditorCore implements IWrapper {
     public static Texture exit;
     public static Texture trueIcon;
     public static Texture falseIcon;
+    public static Texture plus;
+    public static Texture question;
 
     public EditorCore() {
         EventListenerHelper.register(this);
@@ -30,19 +32,29 @@ public class EditorCore implements IWrapper {
     public void onTextureRegistry(TextureRegistryEvent event) {
         TextureContainer container = event.getContainer();
 
-        error = container.register(new ResourceLocation("editor/error.png"));
-        background = container.register(new ResourceLocation("editor/background.png"));
-        resize = container.register(new ResourceLocation("editor/resize.png"));
-        move = container.register(new ResourceLocation("editor/move.png"));
-        zoom = container.register(new ResourceLocation("editor/zoom.png"));
-        add = container.register(new ResourceLocation("editor/add.png"));
-        exit = container.register(new ResourceLocation("editor/exit.png"));
-        trueIcon = container.register(new ResourceLocation("editor/true.png"));
-        falseIcon = container.register(new ResourceLocation("editor/false.png"));
+        error = container.registerSystem(new ResourceLocation("editor/error.png"));
+        background = container.registerSystem(new ResourceLocation("editor/background.png"));
+        resize = container.registerSystem(new ResourceLocation("editor/resize.png"));
+        move = container.registerSystem(new ResourceLocation("editor/move.png"));
+        zoom = container.registerSystem(new ResourceLocation("editor/zoom.png"));
+        add = container.registerSystem(new ResourceLocation("editor/add.png"));
+        exit = container.registerSystem(new ResourceLocation("editor/exit.png"));
+        trueIcon = container.registerSystem(new ResourceLocation("editor/true.png"));
+        falseIcon = container.registerSystem(new ResourceLocation("editor/false.png"));
+        plus = container.registerSystem(new ResourceLocation("editor/plus.png"));
+        question = container.registerSystem(new ResourceLocation("editor/question.png"));
 
         container.register(new ResourceLocation("back.png"));
         container.register(new ResourceLocation("girl.png"));
-        container.register(new ResourceLocation("phil_alpha.png"));
+        container.register(new ResourceLocation("100.jpg"));
+        container.register(new ResourceLocation("101.jpg"));
+        container.register(new ResourceLocation("102.jpg"));
+        container.register(new ResourceLocation("103.jpg"));
+        container.register(new ResourceLocation("400.jpg"));
+        container.register(new ResourceLocation("417.jpg"));
+        container.register(new ResourceLocation("418.jpg"));
+        container.register(new ResourceLocation("429.jpg"));
+        container.register(new ResourceLocation("599.jpg"));
 
     }
 

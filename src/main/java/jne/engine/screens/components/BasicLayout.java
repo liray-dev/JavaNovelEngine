@@ -2,18 +2,20 @@ package jne.engine.screens.components;
 
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
-import jne.engine.utils.IComponent;
-import jne.engine.utils.ILayout;
+import jne.engine.api.IComponent;
+import jne.engine.api.IComponentsListener;
+import jne.engine.api.ILayout;
+import jne.engine.screens.widgets.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 
-public class BasicLayout<SELF extends BasicLayout<SELF>> extends Component<SELF> implements ILayout<SELF> {
+public class BasicLayout<SELF extends BasicLayout<SELF>> extends Component<SELF> implements ILayout {
 
-    private final LayoutContent<SELF> content = new LayoutContent<>();
+    private final LayoutContent<IComponent> content = new LayoutContent<>();
     // for rendering
-    private final NavigableSet<SELF> sorted = new TreeSet<>(((o1, o2) -> {
+    private final NavigableSet<IComponent> sorted = new TreeSet<>(((o1, o2) -> {
         if (o1.getDepth() == o2.getDepth()) {
             return o1.getID().compareTo(o2.getID());
         }
@@ -27,24 +29,24 @@ public class BasicLayout<SELF extends BasicLayout<SELF>> extends Component<SELF>
         this.area = area;
     }
 
-    public String addComponent(final int depth, final String id, @NotNull final SELF component) {
+    public String addComponent(final int depth, final String id, @NotNull final IComponent component) {
         component.setDepth(depth);
         this.putComponent(id, component);
         return component.getID();
     }
 
-    public void putComponent(String id, @NotNull SELF component) {
+    public void putComponent(String id, @NotNull IComponent component) {
         component.setParent(this);
         content.putComponent(id, component);
         sorted.add(component);
     }
 
-    public SELF getComponent(String id) {
+    public IComponent getComponent(String id) {
         return content.getContent().get(id);
     }
 
-    public SELF removeComponent(String id) {
-        SELF removed = content.remove(id);
+    public IComponent removeComponent(String id) {
+        IComponent removed = content.remove(id);
         sorted.remove(removed);
         return removed;
     }
@@ -56,7 +58,7 @@ public class BasicLayout<SELF extends BasicLayout<SELF>> extends Component<SELF>
     }
 
     @Override
-    public @NotNull LayoutContent<SELF> getContent() {
+    public @NotNull LayoutContent<IComponent> getContent() {
         return content;
     }
 
@@ -82,6 +84,10 @@ public class BasicLayout<SELF extends BasicLayout<SELF>> extends Component<SELF>
     @Override
     public void onRender(float partialTicks) {
         sorted.forEach(component -> {
+            Area itArea = component.getArea();
+            Area initialArea = component.getInitialArea();
+            itArea.moveTo(getX() + initialArea.x - itArea.offsetX, getY() + initialArea.y - itArea.offsetY);
+            itArea.z = initialArea.z;
             component.render(partialTicks);
         });
     }
@@ -122,8 +128,15 @@ public class BasicLayout<SELF extends BasicLayout<SELF>> extends Component<SELF>
     }
 
     @Override
+    public void onWheel(int mouseX, int mouseY, int value) {
+        sorted.forEach(component -> {
+            component.onWheel(mouseX, mouseY, value);
+        });
+    }
+
+    @Override
     public void onTick() {
-        sorted.forEach(Component::tick);
+        sorted.forEach(IComponentsListener::tick);
     }
 
 }

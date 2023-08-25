@@ -5,10 +5,10 @@ import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.types.ScriptEvent;
-import jne.engine.screens.components.Component;
-import jne.engine.utils.IComponent;
-import jne.engine.utils.IComponentsListener;
-import jne.engine.utils.IWrapper;
+import jne.engine.screens.widgets.Component;
+import jne.engine.api.IComponent;
+import jne.engine.api.IComponentsListener;
+import jne.engine.api.IWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +61,11 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
     @Override
     final public void keyTyped(char typedChar, int keyCode, KeyboardType type) {
         getComponents().forEach(it -> it.keyTyped(typedChar, keyCode, type));
+    }
+
+    @Override
+    final public void onWheel(int mouseX, int mouseY, int value) {
+        getComponents().forEach(it -> it.onWheel(mouseX, mouseY, value));
     }
 
     @Override
@@ -178,6 +183,10 @@ public class ComponentsListener implements IComponentsListener, IWrapper {
 
     public void tick(ScreenEvent.Tick event) {
         tick();
+    }
+
+    public void wheel(ScreenEvent.Wheel event) {
+        onWheel(event.getMouseX(), event.getMouseY(), event.getValue());
     }
 
     public void onCloseSubScreen(ScreenEvent.Close event) {

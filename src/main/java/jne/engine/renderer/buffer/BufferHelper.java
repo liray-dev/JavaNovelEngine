@@ -1,6 +1,6 @@
 package jne.engine.renderer.buffer;
 
-import jne.engine.utils.IWrapper;
+import jne.engine.api.IWrapper;
 import jne.engine.texture.Texture;
 
 public class BufferHelper implements IWrapper {

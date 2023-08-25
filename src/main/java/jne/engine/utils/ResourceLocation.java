@@ -1,5 +1,7 @@
 package jne.engine.utils;
 
+import jne.engine.api.ICore;
+
 import java.io.File;
 
 public class ResourceLocation implements ICore {

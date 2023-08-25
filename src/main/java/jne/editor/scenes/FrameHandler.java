@@ -1,5 +1,6 @@
 package jne.editor.scenes;
 
+import jne.engine.serializer.ISerializable;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.Hotkeys;
 import jne.engine.constants.KeyboardType;
@@ -7,11 +8,11 @@ import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.Component;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.editor.utils.Frame;
-import jne.engine.utils.IComponent;
+import org.json.JSONObject;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -20,16 +21,16 @@ import java.util.stream.Collectors;
 import static jne.engine.constants.Colors.brightBarColor;
 import static jne.engine.constants.Colors.clickedToolColor;
 
-public class FrameHandler extends ComponentsListener {
+public class FrameHandler extends ComponentsListener implements ISerializable {
 
     protected final int Z_LEVEL = -500;
 
     public final FrameStorage storage;
-    public final SceneEditor sceneEditorScreen;
+    public final SceneUnit sceneUnitScreen;
 
-    public FrameHandler(SceneEditor sceneEditorScreen) {
+    public FrameHandler(SceneUnit sceneUnitScreen) {
         this.storage = new FrameStorage(this);
-        this.sceneEditorScreen = sceneEditorScreen;
+        this.sceneUnitScreen = sceneUnitScreen;
     }
 
     public String currentButton = "";
@@ -170,5 +171,19 @@ public class FrameHandler extends ComponentsListener {
 
     }
 
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("storage", storage.toJson());
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        storage.fromJson(json.getJSONObject("storage"));
+    }
 
 }

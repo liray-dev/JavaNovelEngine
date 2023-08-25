@@ -1,7 +1,10 @@
 package jne.engine.screens.components.constructor;
 
-import jne.engine.screens.components.Component;
+import jne.editor.utils.constructors.AbstractComponentConstructor;
+import jne.engine.errors.DebugManager;
+import jne.engine.screens.widgets.Component;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
@@ -20,7 +23,16 @@ public class ComponentConstructorHelper {
             if (annotation != null) {
                 Class<?>[] methodTypes = getMethodTypes(method);
                 String infoText = annotation.text() + getMethodTypesNames(methodTypes);
-                methodHashMap.put(method.getName(), new MethodConstructor(method, annotation.builder(), methodTypes, annotation.example(), infoText));
+
+                try {
+                    Constructor<?> constructor = annotation.option().getDeclaredConstructor();
+                    constructor.setAccessible(true);
+                    AbstractComponentConstructor option = (AbstractComponentConstructor) constructor.newInstance();
+                    methodHashMap.put(method.getName(), new MethodConstructor(method, annotation.builder(), option, methodTypes, annotation.example(), infoText));
+                } catch (Exception e) {
+                    DebugManager.debug("Error of creating an auxiliary button " + annotation.option().getSimpleName());
+                }
+
             }
         }
 

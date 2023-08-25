@@ -1,9 +1,10 @@
 package jne.engine.screens.widgets;
 
-import jne.engine.screens.components.Component;
+import jne.editor.utils.constructors.SelectTextureConstructor;
 import jne.engine.screens.components.constructor.ComponentConstructor;
 import jne.engine.texture.Texture;
 import jne.engine.texture.TextureContainer;
+import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -32,6 +33,26 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
         }
     }
 
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+
+        json.put("texture", texture.name);
+        json.put("color", color.getRGB());
+        json.put("alpha", alpha);
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        super.fromJson(json);
+
+        this.texture = TextureContainer.get(json.getString("texture"));
+        this.color = new Color(json.getInt("color"));
+        this.alpha = json.getFloat("alpha");
+    }
+
     public SELF self() {
         return (SELF) this;
     }
@@ -48,7 +69,7 @@ public class TexturedComponent<SELF extends TexturedComponent<SELF>> extends Com
             return self();
         }
 
-        @ComponentConstructor(text = "Texture", example = "example: image without '.png'")
+        @ComponentConstructor(text = "Texture", example = "image without '.png'", option = SelectTextureConstructor.class)
         public SELF texture(String texture) {
             instance().texture = TextureContainer.get(texture);
             return self();

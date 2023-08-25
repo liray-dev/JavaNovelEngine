@@ -1,9 +1,9 @@
 package jne.engine.screens.widgets;
 
 import jne.engine.constants.MouseClickType;
-import jne.engine.screens.components.Component;
 import jne.engine.screens.components.constructor.ComponentConstructor;
 import jne.engine.texture.TextureContainer;
+import org.json.JSONObject;
 
 import static jne.engine.constants.Colors.*;
 
@@ -27,6 +27,19 @@ public class CheckBox<SELF extends CheckBox<SELF>> extends Component<SELF> {
     public void onClicked(int mouseX, int mouseY, int button, MouseClickType type) {
         if (type == MouseClickType.RELEASED) return;
         this.flag = !this.flag;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+        json.put("flag", flag);
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        super.fromJson(json);
+        this.flag = json.getBoolean("flag");
     }
 
     public SELF self() {

@@ -1,7 +1,7 @@
 package jne.engine.core;
 
 import jne.engine.screens.ScreenManager;
-import jne.engine.utils.ICore;
+import jne.engine.api.ICore;
 import jne.engine.utils.Util;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;

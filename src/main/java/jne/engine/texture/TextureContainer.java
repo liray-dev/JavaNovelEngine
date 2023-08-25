@@ -2,7 +2,9 @@ package jne.engine.texture;
 
 import jne.engine.utils.ResourceLocation;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TextureContainer {
 
@@ -10,6 +12,13 @@ public class TextureContainer {
 
     public Texture register(ResourceLocation location) {
         Texture texture = new Texture(location);
+        register(location.getName(), texture);
+        return texture;
+    }
+
+    public Texture registerSystem(ResourceLocation location) {
+        Texture texture = new Texture(location);
+        texture.system = true;
         register(location.getName(), texture);
         return texture;
     }
@@ -44,6 +53,10 @@ public class TextureContainer {
         }
         
         return textures.get("error");
+    }
+
+    public static Map<String, Texture> get() {
+       return Collections.unmodifiableMap(textures);
     }
 
     private static final TextureContainer INSTANCE = new TextureContainer();

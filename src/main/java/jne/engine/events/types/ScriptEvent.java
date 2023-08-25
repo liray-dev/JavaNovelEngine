@@ -1,7 +1,6 @@
 package jne.engine.events.types;
 
-import jne.engine.screens.components.Component;
-import jne.engine.utils.IComponent;
+import jne.engine.api.IComponent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

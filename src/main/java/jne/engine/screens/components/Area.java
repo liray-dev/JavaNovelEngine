@@ -1,9 +1,12 @@
 package jne.engine.screens.components;
 
 import jne.engine.constants.Direction;
+import jne.engine.errors.DebugManager;
+import jne.engine.serializer.ISerializable;
+import org.json.JSONObject;
 import org.lwjgl.input.Keyboard;
 
-public class Area implements Cloneable {
+public class Area implements Cloneable, ISerializable {
 
     public float x, y, x2, y2, z;
     public float width, height;
@@ -11,6 +14,19 @@ public class Area implements Cloneable {
     public Area() {
         this.x = 0;
         this.y = 0;
+
+        this.x2 = 0;
+        this.y2 = 0;
+
+        this.z = 0;
+
+        this.width = 0;
+        this.height = 0;
+    }
+
+    public Area(float x, float y) {
+        this.x = x;
+        this.y = y;
 
         this.x2 = 0;
         this.y2 = 0;
@@ -46,7 +62,16 @@ public class Area implements Cloneable {
         // Just crutch
     }
 
-    public void move(float mouseX, float mouseY, int offsetX, int offsetY) {
+    public float offsetX, offsetY = 0;
+
+    public void moveTo(float mouseX, float mouseY) {
+        this.x = mouseX;
+        this.y = mouseY;
+        this.x2 = x + width;
+        this.y2 = y + height;
+    }
+
+    public void move(float mouseX, float mouseY, float offsetX, float offsetY) {
         float deltaX = mouseX - (x + offsetX);
         float deltaY = mouseY - (y + offsetY);
         this.x += deltaX;
@@ -157,6 +182,43 @@ public class Area implements Cloneable {
         return Direction.values()[sectorIndex];
     }
 
+    public Area offset(float offsetX, float offsetY, Direction direction) {
+        float x;
+        float y;
+        switch (direction) {
+            case BOTTOM:
+                x = this.x + offsetX;
+                y = this.y2 + offsetY;
+                break;
+            case RIGHT:
+                x = this.x2 + offsetX;
+                y = this.y + +offsetY;
+                break;
+            default:
+                x = this.x;
+                y = this.y;
+        }
+        return new Area(x, y, this.z, this.width, this.height);
+    }
+
+    public Area offset(float offsetX, float offsetY, float width, float height, Direction direction) {
+        float x;
+        float y;
+        switch (direction) {
+            case BOTTOM:
+                x = this.x + offsetX;
+                y = this.y2 + offsetY;
+                break;
+            case RIGHT:
+                x = this.x2 + offsetX;
+                y = this.y + +offsetY;
+                break;
+            default:
+                x = this.x;
+                y = this.y;
+        }
+        return new Area(x, y, this.z, width, height);
+    }
 
     public Area offset(float offsetX, float offsetY) {
         float x = this.x2 + offsetX;
@@ -190,8 +252,44 @@ public class Area implements Cloneable {
         return width == 0 && height == 0 && x == 0 && y == 0;
     }
 
+
     @Override
-    public Area clone() throws CloneNotSupportedException {
-        return (Area) super.clone();
+    public Area clone() {
+        try {
+            return (Area) super.clone();
+        } catch (CloneNotSupportedException e) {
+            DebugManager.error(new Exception("Failed to copy object coordinates"));
+            return new Area();
+        }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("x", this.x);
+        json.put("y", this.y);
+        json.put("x2", this.x2);
+        json.put("y2", this.y2);
+
+        json.put("z", this.z);
+
+        json.put("width", this.width);
+        json.put("height", this.height);
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        this.x = json.getFloat("x");
+        this.y = json.getFloat("y");
+        this.x2 = json.getFloat("x2");
+        this.y2 = json.getFloat("y2");
+
+        this.z = json.getFloat("z");
+
+        this.width = json.getFloat("width");
+        this.height = json.getFloat("height");
     }
 }

@@ -16,6 +16,7 @@ public class Texture {
     public String name;
     public int width, height;
     public boolean available = true;
+    public boolean system = false;
 
     public Texture(int width, int height, ByteBuffer buffer) {
         textureId = GL11.glGenTextures();

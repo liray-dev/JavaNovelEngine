@@ -1,6 +1,6 @@
-package jne.engine.utils;
+package jne.engine.api;
 
-import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.Component;
 
 public interface ITooltip<T extends Component> {
 

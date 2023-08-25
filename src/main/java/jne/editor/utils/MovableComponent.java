@@ -5,9 +5,9 @@ import jne.engine.constants.Direction;
 import jne.engine.constants.MouseClickType;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.Component;
 import jne.engine.screens.widgets.Label;
-import jne.engine.utils.IWrapper;
+import jne.engine.api.IWrapper;
 import lombok.Data;
 import org.lwjgl.input.Keyboard;
 
@@ -37,16 +37,6 @@ public class MovableComponent implements IWrapper {
         Area area = component.getArea();
 
         RENDER.drawOutline(area);
-
-        if (tooltip) {
-            FONT.drawShadowedText(
-                    "x: " + area.x + "\n" +
-                    "y: " + area.y + "\n" +
-                    "width: " + area.width + "\n" +
-                    "height: " + area.height + "\n",
-                    mouseX + 15, mouseY, area.z,
-                    shift ? trueColor : Color.WHITE, false, 0.8F);
-        }
 
         if (direction != null) {
             int size = 2;
@@ -87,6 +77,17 @@ public class MovableComponent implements IWrapper {
                     break;
             }
         }
+
+        if (tooltip) {
+            FONT.drawShadowedText(
+                    "x: " + area.x + "\n" +
+                            "y: " + area.y + "\n" +
+                            "width: " + area.width + "\n" +
+                            "height: " + area.height + "\n",
+                    mouseX + 15, mouseY, area.z,
+                    shift ? trueColor : Color.WHITE, false, 0.8F);
+        }
+
     }
 
     public void input(ScreenEvent.MouseInput event) {

@@ -1,5 +1,6 @@
 package jne.engine.core;
 
+import jne.engine.api.ICore;
 import jne.engine.errors.DebugManager;
 import jne.engine.events.types.TextureRegistryEvent;
 import jne.engine.screens.listeners.ComponentsListener;

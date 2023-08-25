@@ -1,8 +1,8 @@
 package jne.engine.screens.widgets;
 
 import jne.engine.constants.KeyboardType;
-import jne.engine.screens.components.Component;
 import jne.engine.screens.components.constructor.ComponentConstructor;
+import org.json.JSONObject;
 import org.lwjgl.input.Keyboard;
 
 import static jne.engine.constants.Colors.*;
@@ -22,17 +22,17 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
         if (text != null && !text.isEmpty()) {
             float x = (area.x + FONT.getWidth(text.substring(0, 1)) / 2);
             float y = (area.y + (area.height - FONT.getHeight(text)) / 2);
-            FONT.drawText(text, x, y, area.z, textColor, false, size);
+            FONT.drawColoredShadowedText(text, x, y, area.z, textColor, false, size);
 
             if (active && ticks >= 10) {
                 int length = text.substring(0, cursorPositionX).length();
                 String spaceString = new String(new char[length]).replace('\0', ' ');
-                FONT.drawText(spaceString + "|", x - FONT.getWidth(text.substring(0, 1)) / (2 / size), y, area.z, textCursorColor, false, size);
+                FONT.drawColoredShadowedText(spaceString + "|", x - FONT.getWidth(text.substring(0, 1)) / (2 / size), y, area.z, textCursorColor, false, size);
             }
         } else {
             if (ghostText != null && !ghostText.isEmpty()) {
                 float y = (area.y + (area.height - FONT.getHeight(ghostText)) / 2);
-                FONT.drawText(ghostText, area.x, y, area.z, ghostColor, false, size);
+                FONT.drawColoredShadowedText(ghostText, area.x, y, area.z, ghostColor, false, size);
             }
         }
     }
@@ -73,6 +73,26 @@ public class TextBox<SELF extends TextBox<SELF>> extends Component<SELF> {
             text = text.substring(0, cursorPositionX) + typedChar + text.substring(cursorPositionX);
             cursorPositionX++;
         }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+
+        json.put("text", text);
+        json.put("ghostText", ghostText);
+        json.put("size", size);
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        super.fromJson(json);
+
+        this.text = json.getString("text");
+        this.ghostText = json.getString("ghostText");
+        this.size = json.getFloat("size");
     }
 
     public SELF self() {

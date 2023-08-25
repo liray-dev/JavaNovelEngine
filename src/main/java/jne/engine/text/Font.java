@@ -1,7 +1,7 @@
 package jne.engine.text;
 
 import jne.engine.texture.Texture;
-import jne.engine.utils.IWrapper;
+import jne.engine.api.IWrapper;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -222,6 +222,11 @@ public class Font implements IWrapper {
 
     public void drawShadowedText(CharSequence text, float x, float y, float z, Color color, boolean centered, float size) {
         drawText(text, x + 1, y + 1, z, toolColor, centered, size);
+        drawText(text, x, y, z, color, centered, size);
+    }
+
+    public void drawColoredShadowedText(CharSequence text, float x, float y, float z, Color color, boolean centered, float size) {
+        drawText(text, x + 1, y + 1, z, color.darker().darker(), centered, size);
         drawText(text, x, y, z, color, centered, size);
     }
 

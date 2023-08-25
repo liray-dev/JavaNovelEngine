@@ -1,23 +1,32 @@
-package jne.engine.screens.components;
+package jne.engine.screens.widgets;
 
 
+import jne.engine.api.IComponent;
+import jne.engine.api.IPressable;
+import jne.engine.api.ITooltip;
+import jne.engine.api.IWrapper;
 import jne.engine.constants.EnumScriptType;
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
 import jne.engine.errors.DebugManager;
 import jne.engine.events.types.ScriptEvent;
+import jne.engine.screens.components.Area;
+import jne.engine.screens.components.ComponentBuilder;
 import jne.engine.scripts.ScriptContainer;
-import jne.engine.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 import java.util.UUID;
 
 public class Component<SELF extends Component<SELF>> implements IComponent, IWrapper {
 
     protected String id;
+
     protected Area area;
+    protected Area initialArea;
     protected float depth;
+
     protected ScriptContainer scriptContainer;
 
     protected int mouseX, mouseY;
@@ -41,6 +50,7 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
     protected Component() {
         this.id = UUID.randomUUID().toString();
         this.area = new Area();
+        this.initialArea = area;
         this.depth = area.z;
         this.scriptContainer = new ScriptContainer();
         this.visible = true;
@@ -262,7 +272,20 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
 
     @Override
     final public void setArea(Area area) {
-        this.area = area;
+        this.area = area.clone();
+    }
+
+    @Override
+    final public Area getArea() {
+        return this.area;
+    }
+
+    final public Area getInitialArea() {
+        return initialArea;
+    }
+
+    final public void setInitialArea(Area initialArea) {
+        this.initialArea = initialArea;
     }
 
     @Override
@@ -279,11 +302,6 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
     @Override
     public void markDirty() {
         this.markDirty = true;
-    }
-
-    @Override
-    final public Area getArea() {
-        return this.area;
     }
 
     @Override
@@ -321,8 +339,72 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
         return scriptContainer;
     }
 
+    private Object answer;
+
+    @Override
+    public void setAnswer(Object obj) {
+        this.answer = obj;
+    }
+
+    @Override
+    public Object getAnswer() {
+        return answer;
+    }
+
+    @Override
+    public void setOnPress(IPressable<?> press) {
+        this.onPress = (IPressable<SELF>) press;
+    }
+
+    @Override
+    public void setOnFailPress(IPressable<?> failPress) {
+        this.onFailPress = (IPressable<SELF>) failPress;
+    }
+
+    @Override
+    public void setOnTooltip(IPressable<?> tooltip) {
+        this.onTooltip = (ITooltip<SELF>) tooltip;
+    }
+
+    @Override
+    public boolean inFocus() {
+        return focused;
+    }
+
     public SELF self() {
         return (SELF) this;
+    }
+
+    @Override
+    final public String getComponentType() {
+        return this.getClass().getName();
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("id", this.id);
+        json.put("type", this.getComponentType());
+
+        json.put("area", this.area.toJson());
+        json.put("initialArea", this.initialArea.toJson());
+        json.put("depth", this.depth);
+
+        json.put("script", this.scriptContainer.script);
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        this.id = json.getString("id");
+
+        this.area.fromJson(json.getJSONObject("area"));
+        this.initialArea.fromJson(json.getJSONObject("initialArea"));
+        this.depth = json.getFloat("depth");
+
+        this.scriptContainer.script = json.getString("script");
     }
 
     public static class Builder<SELF extends Builder<SELF, T>, T extends Component<T>> extends ComponentBuilder<SELF, T> {
@@ -348,7 +430,8 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
         }
 
         public SELF area(Area area) {
-            instance().area = area;
+            instance().area = area.clone();
+            instance().initialArea = area.clone();
             instance().depth = area.z;
             return self();
         }
@@ -378,6 +461,10 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
             return self();
         }
 
+        public SELF answer(Object obj) {
+            instance().setAnswer(obj);
+            return self();
+        }
 
     }
     /*
@@ -405,6 +492,11 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
     }
 
     @Override
+    public void onWheel(int mouseX, int mouseY, int value) {
+
+    }
+
+    @Override
     public void onMoveClick(int mouseX, int mouseY, int mouseButton, long lastClickTime) {
 
     }
@@ -423,6 +515,7 @@ public class Component<SELF extends Component<SELF>> implements IComponent, IWra
         try {
             IComponent clone = (IComponent) super.clone();
             clone.setArea(area.clone());
+            clone.setInitialArea(initialArea.clone());
             return clone;
         } catch (CloneNotSupportedException e) {
             DebugManager.error(e);

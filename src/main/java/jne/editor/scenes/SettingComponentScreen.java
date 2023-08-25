@@ -1,18 +1,23 @@
 package jne.editor.scenes;
 
+import jne.editor.utils.constructors.AbstractComponentConstructor;
+import jne.engine.constants.Direction;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
 import jne.engine.errors.DebugManager;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.Component;
 import jne.engine.screens.components.constructor.ComponentConstructorHelper;
 import jne.engine.screens.components.constructor.MethodConstructor;
 import jne.engine.screens.listeners.ComponentsListener;
+import jne.engine.screens.widgets.Button;
 import jne.engine.screens.widgets.CheckBox;
+import jne.engine.screens.widgets.Panel;
 import jne.engine.screens.widgets.TextBox;
 import jne.engine.texture.TextureContainer;
+import jne.engine.api.IComponent;
 import jne.engine.utils.Util;
 
 import java.awt.*;
@@ -22,7 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static jne.engine.constants.Colors.*;
+import static jne.engine.constants.Colors.darkBarColor;
+import static jne.engine.constants.Colors.toolColor;
 
 public class SettingComponentScreen extends ComponentsListener {
 
@@ -32,12 +38,14 @@ public class SettingComponentScreen extends ComponentsListener {
     protected boolean errored = false;
     protected final ComponentConstructorHelper builderHelper;
     protected final Area area;
+    protected final Area previewArea;
 
     public Component<? extends Component<?>> component;
 
     public SettingComponentScreen(ComponentConstructorHelper builderHelper, Area area) {
         this.builderHelper = builderHelper;
         this.area = area;
+        this.previewArea = new Area(area.x2 - 465, area.y2 / 2, Z_LEVEL, 460, area.height / 2 - 5);
     }
 
     public void collect() {
@@ -56,7 +64,7 @@ public class SettingComponentScreen extends ComponentsListener {
 
             this.component = (Component<? extends Component<?>>) builder.build();
             Area center = this.area.getCenter();
-            this.component.setArea(new Area(center.x - 100, center.y - 100, Z_LEVEL, 200, 200));
+            this.component.setArea(previewArea);
             add(this.component);
         }
     }
@@ -110,6 +118,7 @@ public class SettingComponentScreen extends ComponentsListener {
                 .color(toolColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
+                        this.component = null;
                         kill();
                     }
                 })
@@ -162,10 +171,51 @@ public class SettingComponentScreen extends ComponentsListener {
             if (constructor.getComponent().equals(TextBox.class)) {
                 TextBox<? extends TextBox<?>> textBox = GRAPHICS.textbox().area(areaConstructor).size(0.8F).ghostText(constructor.getGhostText()).build();
                 add(textBox);
+
+                AbstractComponentConstructor constructorOption = constructor.getOption();
+                constructorOption.setDepth(Z_LEVEL);
+                IComponent option = constructorOption.collect();
+
+                if (option != null) {
+                    Area finalAreaConstructor = areaConstructor.offset(35, 2.5F, 250, 250, Direction.RIGHT);
+                    Button<? extends Button<?>> optionButton = GRAPHICS.button()
+                            .area(areaConstructor.offset(5, 2.5F, 25, 25, Direction.RIGHT))
+                            .texture(TextureContainer.get("plus"))
+                            .onPress((component, type) -> {
+                                if (type != MouseClickType.CLICKED) return;
+                                if (getComponents().stream().anyMatch(iComponent -> iComponent.getID().equals(option.getID())))
+                                    return;
+                                option.setArea(finalAreaConstructor);
+                                if (option instanceof Panel) {
+                                    ((Panel<?>) option).setScrollHandler(null);
+                                }
+                                add(option);
+                            })
+                            .onFailPress((component, type) -> {
+                                if (type != MouseClickType.CLICKED) return;
+                                if (option.inFocus()) {
+                                    if (option instanceof Panel) {
+                                        IComponent scrollHandler = ((Panel<?>) option).getScrollHandler();
+                                        if (scrollHandler != null) {
+                                            textBox.text = (String) scrollHandler.getAnswer();
+                                            textBox.cursorPositionX = textBox.text.length();
+                                            remove(option);
+                                            collect();
+                                        }
+                                    }
+                                    return;
+                                }
+                                remove(option);
+                            })
+                            .build();
+                    add(optionButton);
+                }
+
                 builderComponents.put(constructor, textBox);
             } else if (constructor.getComponent().equals(CheckBox.class)) {
                 CheckBox<? extends CheckBox<?>> checkBox = GRAPHICS.checkbox().area(areaConstructor.offset(-textboxWidth, -textboxHeight, textboxHeight, textboxHeight)).build();
                 add(checkBox);
+
                 builderComponents.put(constructor, checkBox);
             }
             String infoText = constructor.getInfoText();
@@ -185,15 +235,31 @@ public class SettingComponentScreen extends ComponentsListener {
             RENDER.drawQuad(area.x, area.y, Z_LEVEL, area.x2, area.y2);
         });
 
+        RENDER.color(darkBarColor.brighter(), () -> {
+            RENDER.drawQuad(previewArea.x, previewArea.y, Z_LEVEL, previewArea.x2, previewArea.y2);
+        });
+
+        if (component == null) {
+            Area previewAreaCenter = previewArea.getCenter();
+            RENDER.color(darkBarColor, () -> {
+                RENDER.drawTexturedQuad(previewAreaCenter.x - 100, previewAreaCenter.y - 100, previewArea.z, previewAreaCenter.x + 100, previewAreaCenter.y + 100, TextureContainer.get("question"));
+            });
+        }
+
         render(partialTick);
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneUnit.class, FrameStorage.class, AddComponentScreen.class})
     public void move(ScreenEvent.MouseMove event) {
         this.mouseMove(event.getMouseX(), event.getMouseY());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneUnit.class, FrameStorage.class, AddComponentScreen.class})
+    public void clickMove(ScreenEvent.MouseClickMove event) {
+        this.mouseClickMove(event.getMouseX(), event.getMouseY(), event.getButton(), event.getLast());
+    }
+
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneUnit.class, FrameStorage.class, AddComponentScreen.class})
     public void input(ScreenEvent.MouseInput event) {
         MouseClickType type = event.getType();
         if (type == MouseClickType.CLICKED) {
@@ -204,12 +270,12 @@ public class SettingComponentScreen extends ComponentsListener {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class, AddComponentScreen.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneUnit.class, FrameStorage.class, AddComponentScreen.class})
     public void keyboard(ScreenEvent.Keyboard event) {
         this.keyTyped(event.getCharacter(), event.getButton(), event.getType());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneUnit.class, FrameStorage.class})
     public void tick(ScreenEvent.Tick event) {
         super.tick(event);
     }

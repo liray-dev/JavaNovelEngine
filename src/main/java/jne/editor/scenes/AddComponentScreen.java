@@ -7,7 +7,6 @@ import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.constructor.ComponentConstructorHelper;
 import jne.engine.screens.listeners.ComponentsListener;
-import jne.engine.screens.widgets.Panel;
 import jne.engine.texture.TextureContainer;
 
 import java.awt.*;
@@ -17,16 +16,13 @@ import static jne.engine.constants.Colors.toolColor;
 
 public class AddComponentScreen extends ComponentsListener {
 
-    private final int Z_LEVEL = 150;
+    private final int Z_LEVEL = 250;
 
     private Area area = new Area();
 
-    Panel panel;
 
     @Override
     public void init() {
-
-
 
         int width = WINDOW.desktop.getWidth();
         int height = WINDOW.desktop.getHeight();
@@ -129,12 +125,12 @@ public class AddComponentScreen extends ComponentsListener {
         super.render(event.getPartialTick());
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneUnit.class, FrameStorage.class})
     public void input(ScreenEvent.MouseInput event) {
         super.input(event);
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneEditor.class, FrameStorage.class})
+    @SubscribeEvent(priority = EventPriority.NORMAL, exclusion = {SceneUnit.class, FrameStorage.class})
     public void keyboard(ScreenEvent.Keyboard event) {
         super.keyboard(event);
     }

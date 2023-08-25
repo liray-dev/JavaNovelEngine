@@ -1,6 +1,7 @@
 package jne.engine.screens.components.constructor;
 
-import jne.engine.screens.components.Component;
+import jne.editor.utils.constructors.AbstractComponentConstructor;
+import jne.engine.screens.widgets.Component;
 import jne.engine.screens.widgets.TextBox;
 
 import java.lang.annotation.Retention;
@@ -19,5 +20,7 @@ public @interface ComponentConstructor {
     String text() default "Enter the value";
     String example() default "";
     Class<? extends Component> builder() default TextBox.class;
+
+    Class<? extends AbstractComponentConstructor> option() default AbstractComponentConstructor.class;
 
 }

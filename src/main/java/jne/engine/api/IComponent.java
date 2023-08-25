@@ -1,14 +1,16 @@
-package jne.engine.utils;
+package jne.engine.api;
 
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.Component;
 import jne.engine.scripts.ScriptContainer;
+import jne.engine.serializer.ISerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface IComponent extends Cloneable, IComponentsListener {
+public interface IComponent extends Cloneable, IComponentsListener, ISerializable {
+
+    String getComponentType();
 
     String getID();
 
@@ -58,6 +60,10 @@ public interface IComponent extends Cloneable, IComponentsListener {
 
     void setArea(Area area);
 
+    Area getInitialArea();
+
+    void setInitialArea(Area initialArea);
+
     int getDepth();
 
     void setDepth(int value);
@@ -82,6 +88,18 @@ public interface IComponent extends Cloneable, IComponentsListener {
 
     ScriptContainer getScriptContainer();
 
+    void setAnswer(Object obj);
+
+    Object getAnswer();
+
+    void setOnPress(IPressable<?> press);
+
+    void setOnFailPress(IPressable<?> failPress);
+
+    void setOnTooltip(IPressable<?> tooltip);
+
+    boolean inFocus();
+
     void onRender(float partialTicks);
 
     void onFocused(int mouseX, int mouseY);
@@ -89,6 +107,8 @@ public interface IComponent extends Cloneable, IComponentsListener {
     void onClicked(int mouseX, int mouseY, int button, MouseClickType type);
 
     void onFailClick(int mouseX, int mouseY, int button, MouseClickType type);
+
+    void onWheel(int mouseX, int mouseY, int value);
 
     void onMoveClick(int mouseX, int mouseY, int mouseButton, long lastClickTime);
 

@@ -2,8 +2,8 @@ package jne.engine.screens.widgets;
 
 import jne.engine.constants.Colors;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.Component;
 import jne.engine.screens.components.constructor.ComponentConstructor;
+import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -19,12 +19,33 @@ public class Label<SELF extends Label<SELF>> extends Component<SELF> {
         if (text != null && !text.isEmpty()) {
             if (isCentered) {
                 Area center = area.getCenter();
-                FONT.drawText(text, center.x, center.y, area.z, color, true, size);
+                FONT.drawColoredShadowedText(text, center.x, center.y, area.z, color, true, size);
             } else {
-                FONT.drawText(text, area.x, area.y, area.z, color, false, size);
+                FONT.drawColoredShadowedText(text, area.x, area.y, area.z, color, false, size);
             }
 
         }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+
+        json.put("color", color.getRGB());
+        json.put("size", size);
+        json.put("text", text);
+        json.put("isCentered", isCentered);
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        super.fromJson(json);
+        this.color = new Color(json.getInt("color"));
+        this.size = json.getInt("size");
+        this.text = json.getString("text");
+        this.isCentered = json.getBoolean("isCentered");
     }
 
     public SELF self() {

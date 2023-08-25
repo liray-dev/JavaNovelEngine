@@ -62,6 +62,14 @@ public class ScreenEvent {
 
     }
 
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    public static class Wheel extends Event {
+
+        private final int mouseX, mouseY, value;
+
+    }
+
     public static class Tick extends Event {
     }
 

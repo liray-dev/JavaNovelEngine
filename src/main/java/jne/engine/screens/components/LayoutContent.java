@@ -2,7 +2,7 @@
 
 package jne.engine.screens.components;
 
-import jne.engine.utils.IComponent;
+import jne.engine.api.IComponent;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +43,10 @@ public class LayoutContent<T extends IComponent> {
 
     public T get(String id) {
         return content.get(id);
+    }
+
+    public Map<String, T> getAll() {
+        return content;
     }
 
     public Map<String, T> getContent() {

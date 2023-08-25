@@ -1,4 +1,4 @@
-package jne.engine.utils;
+package jne.engine.api;
 
 import jne.engine.constants.KeyboardType;
 
@@ -15,6 +15,8 @@ public interface IComponentsListener {
     void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick);
 
     void keyTyped(char typedChar, int keyCode, KeyboardType type);
+
+    void onWheel(int mouseX, int mouseY, int value);
 
     void tick();
 

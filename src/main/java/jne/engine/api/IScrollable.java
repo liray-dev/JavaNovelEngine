@@ -1,7 +1,6 @@
-package jne.engine.utils;
+package jne.engine.api;
 
-import jne.engine.screens.components.Component;
-import jne.engine.utils.IComponent;
+import jne.engine.screens.widgets.Component;
 import org.jetbrains.annotations.Nullable;
 
 /**

@@ -1,6 +1,6 @@
 package jne.engine.screens;
 
-import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.Component;
 import jne.engine.screens.widgets.*;
 
 public class Graphics {

@@ -2,7 +2,7 @@
 
 package jne.engine.screens.components;
 
-import jne.engine.utils.IComponent;
+import jne.engine.api.IComponent;
 
 /**
  * Implementation of a handy builder for creating multifunctional UI components.

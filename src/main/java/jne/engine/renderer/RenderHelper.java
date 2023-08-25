@@ -2,12 +2,13 @@ package jne.engine.renderer;
 
 import jne.engine.screens.components.Area;
 import jne.engine.texture.Texture;
-import jne.engine.utils.IWrapper;
+import jne.engine.api.IWrapper;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
 import static jne.engine.constants.Colors.*;
+import static org.lwjgl.opengl.GL11.*;
 
 public class RenderHelper implements IWrapper {
 
@@ -53,6 +54,22 @@ public class RenderHelper implements IWrapper {
 
     public void clearColor() {
         GL11.glColor4f(1F, 1F, 1F, 1F);
+    }
+
+    public void scissor(float x, float y, float width, float height, Runnable runnable) {
+        glEnable(GL_SCISSOR_TEST);
+
+        if (width < 0) {
+            width = 1;
+        }
+
+        if (height < 0) {
+            height = 1;
+        }
+        
+        glScissor((int) x, (int) (WINDOW.displayHeight - y - height), (int) width, (int) height);
+        runnable.run();
+        glDisable(GL_SCISSOR_TEST);
     }
 
     public void drawQuad(float x, float y, float width, float height) {

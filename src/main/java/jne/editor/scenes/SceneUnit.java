@@ -1,6 +1,7 @@
 package jne.editor.scenes;
 
 import jne.editor.utils.EditingTypes;
+import jne.engine.serializer.ISerializable;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.Hotkeys;
 import jne.engine.constants.MouseClickType;
@@ -11,12 +12,13 @@ import jne.engine.screens.components.Area;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.screens.widgets.Button;
 import jne.engine.texture.TextureContainer;
+import org.json.JSONObject;
 
 import java.util.List;
 
 import static jne.engine.constants.Colors.*;
 
-public class SceneEditor extends ComponentsListener {
+public class SceneUnit extends ComponentsListener implements ISerializable {
 
     protected final int Z_LEVEL = 0;
 
@@ -26,7 +28,7 @@ public class SceneEditor extends ComponentsListener {
     public String currentButton = "";
 
 
-    public SceneEditor() {
+    public SceneUnit() {
         this.frameHandler = new FrameHandler(this);
         EventListenerHelper.register(this.frameHandler);
         EventListenerHelper.register(this.frameHandler.storage);
@@ -72,6 +74,7 @@ public class SceneEditor extends ComponentsListener {
                         currentEditingType = EditingTypes.ZOOM;
                         currentButton = component.getID();
                         recreate();
+                        System.out.println(toJson());
                     }
                 })
                 .build());
@@ -157,4 +160,19 @@ public class SceneEditor extends ComponentsListener {
     public void tick(ScreenEvent.Tick event) {
         super.tick(event);
     }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("frameHandler", frameHandler.toJson());
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        frameHandler.fromJson(json.getJSONObject("frameHandler"));
+    }
+
 }

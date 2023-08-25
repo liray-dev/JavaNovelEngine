@@ -1,6 +1,6 @@
 package jne.engine.core;
 
-import jne.engine.utils.ICore;
+import jne.engine.api.ICore;
 
 public class Settings implements ICore {
 

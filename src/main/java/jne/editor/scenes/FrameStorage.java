@@ -3,21 +3,24 @@ package jne.editor.scenes;
 import jne.editor.utils.EditingTypes;
 import jne.editor.utils.Frame;
 import jne.editor.utils.MovableComponent;
+import jne.engine.serializer.ISerializable;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
 import jne.engine.errors.DebugManager;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
-import jne.engine.screens.components.Component;
+import jne.engine.screens.widgets.Component;
 import jne.engine.screens.listeners.ComponentsListener;
+import jne.engine.api.IComponent;
+import org.json.JSONObject;
 import org.lwjgl.input.Keyboard;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FrameStorage extends ComponentsListener {
+public class FrameStorage extends ComponentsListener implements ISerializable {
 
     protected final int Z_LEVEL = -1000;
 
@@ -39,23 +42,27 @@ public class FrameStorage extends ComponentsListener {
     public void init() {
         // Just debug
         this.isInit = true;
-        Area center = new Area(120, 120, width - 120, height - 120, Z_LEVEL, false).getCenter();
-        Area area = new Area(center.x - 100, center.y - 100, Z_LEVEL, 200, 200);
 
-        add(GRAPHICS.button().area(area).color(44444444).onPress((c, t) -> {
-            if (t == MouseClickType.CLICKED) {
-                lastClickedComponent = c;
-            }
-        }).texture("exit").build());
-        add(GRAPHICS.button()
-                .area(area.offset(-100, -100))
-                .color(14444444)
-                .onPress((c, t) -> {
-                    if (t == MouseClickType.CLICKED) {
-                        lastClickedComponent = c;
-                    }
-                })
-                .texture("zoom").build());
+
+//        Panel<? extends Panel<?>> panel = GRAPHICS.panel().area(new Area(10, 10, Z_LEVEL, 600, 80)).wrapContent().onPress((c, t) -> {
+//            if (t == MouseClickType.CLICKED) {
+//                lastClickedComponent = c;
+//            }
+//        }).build();
+//
+//        Set<Map.Entry<String, Texture>> textures = TextureContainer.get().entrySet();
+//
+//        Area area = new Area(1, -51, 0, 50, 50);
+//
+//        for (Map.Entry<String, Texture> unit : textures) {
+//            String key = unit.getKey();
+//            Texture value = unit.getValue();
+//            area = area.offset(0, 0, Direction.BOTTOM);
+//            panel.addComponent(0, GRAPHICS.texture().texture(value).area(area).build());
+//            panel.addComponent(1, GRAPHICS.label().area(area.offset(5, 20, Direction.RIGHT)).text(key).build());
+//        }
+
+        //add(panel);
     }
 
     public void selectComponent(Component component) {
@@ -134,7 +141,7 @@ public class FrameStorage extends ComponentsListener {
     }
 
     public EditingTypes getEditType() {
-        return frameHandler.sceneEditorScreen.currentEditingType;
+        return frameHandler.sceneUnitScreen.currentEditingType;
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -179,6 +186,11 @@ public class FrameStorage extends ComponentsListener {
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
+    public void wheel(ScreenEvent.Wheel event) {
+        super.wheel(event);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
     public void keyboard(ScreenEvent.Keyboard event) {
         int button = event.getButton();
         if (button == Keyboard.KEY_ESCAPE) {
@@ -186,24 +198,55 @@ public class FrameStorage extends ComponentsListener {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public void onCloseSubScreen(ScreenEvent.Close event) {
         if (event.getScreen().getClass().equals(SettingComponentScreen.class)) {
             SettingComponentScreen screen = (SettingComponentScreen) event.getScreen();
             if (screen.init) {
-                Component<? extends Component<?>> component = screen.component;
-                component.getArea().z = Z_LEVEL;
-                component.onPress = (c, type) -> {
+                if (screen.component == null) return;
+                IComponent component = screen.component.clone();
+
+                float centerX = WINDOW.displayWidth / 2F;
+                float centerY = WINDOW.displayHeight / 2F;
+
+                component.setArea(new Area(centerX - 100,  centerY - 100, Z_LEVEL, 200, 200));
+                component.setOnPress((c, type) -> {
                     if (type == MouseClickType.CLICKED) {
-                        lastClickedComponent = c;
+                        lastClickedComponent = (Component) c;
                     }
-                };
+                });
                 add(component);
 
                 // Debug
                 String name = component.getClass().getSimpleName();
                 DebugManager.debug(name + " was added!");
             }
+        }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        frames.forEach(frame -> {
+            json.put(String.valueOf(frame.getId()), frame.toJson());
+        });
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        frames.clear();
+
+        for (String key : json.keySet()) {
+            JSONObject frameJson = json.getJSONObject(key);
+
+
+            Frame frame = new Frame(Integer.getInteger(key));
+            frame.fromJson(frameJson);
+
+            frames.add(frame);
         }
     }
 

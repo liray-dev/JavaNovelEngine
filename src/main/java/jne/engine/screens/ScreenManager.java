@@ -1,12 +1,12 @@
 package jne.engine.screens;
 
+import jne.engine.constants.KeyboardType;
+import jne.engine.constants.MouseClickType;
 import jne.engine.events.EventListenerHelper;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
-import jne.engine.utils.IWrapper;
-import jne.engine.constants.KeyboardType;
-import jne.engine.constants.MouseClickType;
+import jne.engine.api.IWrapper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -50,7 +50,7 @@ public class ScreenManager implements IWrapper {
     /**
      * A method that handles mouse input when the mouse is clicked and moved
      */
-    private void mouseClickMove(int mouseX, int mouseY, int button, long last) {
+    private void mouseClickMove(int mouseX, int mouseY, int button, long last)  {
         new ScreenEvent.MouseClickMove(mouseX, mouseY, button, last).post();
     }
 
@@ -202,6 +202,12 @@ public class ScreenManager implements IWrapper {
             flag = false;
         }
 
+        int dWheel = Mouse.getDWheel();
+
+        if (Mouse.hasWheel() && dWheel != 0) {
+            new ScreenEvent.Wheel(x, y, dWheel).post();
+        }
+
         if (flag) {
             this.mouseMove(x, y);
         }
@@ -219,7 +225,7 @@ public class ScreenManager implements IWrapper {
             this.keyboardEventButton = eventKey;
             this.lastKeyboardEvent = getSystemTime();
             this.keyTyped(character, eventKey, KeyboardType.START);
-        } else  {
+        } else {
             this.keyTyped(lastChar, keyboardEventButton, KeyboardType.STOP);
         }
     }

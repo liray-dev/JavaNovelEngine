@@ -1,5 +1,7 @@
 package jne.engine.screens.widgets;
 
+import org.json.JSONObject;
+
 public class Button<SELF extends Button<SELF>> extends TexturedComponent<SELF> {
 
     public Label label;
@@ -10,6 +12,25 @@ public class Button<SELF extends Button<SELF>> extends TexturedComponent<SELF> {
 
         if (label != null && !label.text.isEmpty()) {
             label.onRender(partialTicks);
+        }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+
+        if (label != null) {
+            json.put("label", label.toJson());
+        }
+
+        return json;
+    }
+
+    @Override
+    public void fromJson(JSONObject json) {
+        super.fromJson(json);
+        if (json.has("label")) {
+            label.fromJson(json.getJSONObject("label"));
         }
     }
 

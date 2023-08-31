@@ -44,7 +44,7 @@ public class TextureContainer {
     }
 
     public static Texture get(String name) {
-        if (name.isEmpty() || name == null) {
+        if (name == null || name.isEmpty()) {
             return textures.get("error");
         }
 

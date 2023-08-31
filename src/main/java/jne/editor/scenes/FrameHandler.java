@@ -1,6 +1,6 @@
 package jne.editor.scenes;
 
-import jne.engine.serializer.ISerializable;
+import jne.engine.api.ISerializable;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.Hotkeys;
 import jne.engine.constants.KeyboardType;
@@ -18,8 +18,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static jne.engine.constants.Colors.brightBarColor;
-import static jne.engine.constants.Colors.clickedToolColor;
+import static jne.engine.constants.Colors.*;
 
 public class FrameHandler extends ComponentsListener implements ISerializable {
 
@@ -42,7 +41,7 @@ public class FrameHandler extends ComponentsListener implements ISerializable {
         add(GRAPHICS.button()
                 .id("minus")
                 .area(new Area(60, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text("-").color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
+                .label(GRAPHICS.label().text("-").color(falseColor.brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
@@ -100,7 +99,7 @@ public class FrameHandler extends ComponentsListener implements ISerializable {
         add(GRAPHICS.button()
                 .id("plus")
                 .area(new Area(160, height - 25, Z_LEVEL, 25, 25))
-                .label(GRAPHICS.label().text("+").color(clickedToolColor.brighter()).size(0.5F).centered(true).build(), true)
+                .label(GRAPHICS.label().text("+").color(trueColor.brighter()).size(0.5F).centered(true).build(), true)
                 .color(brightBarColor)
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {

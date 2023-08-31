@@ -23,6 +23,10 @@ public class EditorCore implements IWrapper {
     public static Texture falseIcon;
     public static Texture plus;
     public static Texture question;
+    public static Texture back;
+    public static Texture algorithm;
+    public static Texture layers;
+    public static Texture selection;
 
     public EditorCore() {
         EventListenerHelper.register(this);
@@ -43,8 +47,12 @@ public class EditorCore implements IWrapper {
         falseIcon = container.registerSystem(new ResourceLocation("editor/false.png"));
         plus = container.registerSystem(new ResourceLocation("editor/plus.png"));
         question = container.registerSystem(new ResourceLocation("editor/question.png"));
+        back = container.registerSystem(new ResourceLocation("editor/back.png"));
+        algorithm = container.registerSystem(new ResourceLocation("editor/algorithm.png"));
+        layers = container.registerSystem(new ResourceLocation("editor/layers.png"));
+        selection = container.registerSystem(new ResourceLocation("editor/selection.png"));
 
-        container.register(new ResourceLocation("back.png"));
+        container.register(new ResourceLocation("milkground.png"));
         container.register(new ResourceLocation("girl.png"));
         container.register(new ResourceLocation("100.jpg"));
         container.register(new ResourceLocation("101.jpg"));

@@ -13,6 +13,7 @@ public class Hotkeys {
     public static int leftFrameKey = Keyboard.KEY_LEFT;
     public static int rightFrameKey = Keyboard.KEY_RIGHT;
 
+    public static int backKey = Keyboard.KEY_ESCAPE;
 
 
 }

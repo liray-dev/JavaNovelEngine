@@ -3,9 +3,32 @@ package jne.engine.renderer.buffer;
 import jne.engine.api.IWrapper;
 import jne.engine.texture.Texture;
 
+import static java.lang.Math.sqrt;
+
 public class BufferHelper implements IWrapper {
 
     private static final float Z_LEVEL = -5000F;
+
+    public void addLineData(BufferBuilder builder, float startX, float startY, float endX, float endY, float z, float lineWidth) {
+        float dx = endX - startX;
+        float dy = endY - startY;
+        float length = (float) sqrt(dx * dx + dy * dy);
+        float unitX = dx / length;
+        float unitY = dy / length;
+
+        float offsetX = unitY * lineWidth;
+        float offsetY = -unitX * lineWidth;
+
+        builder.addVertex(startX + offsetX, startY + offsetY, z, 0F, 1F);
+        builder.addVertex(endX + offsetX, endY + offsetY, z, 1F, 0F);
+        builder.addVertex(endX - offsetX, endY - offsetY, z, 1F, 1F);
+
+        builder.addVertex(startX + offsetX, startY + offsetY, z, 0F, 1F);
+        builder.addVertex(endX - offsetX, endY - offsetY, z, 1F, 1F);
+        builder.addVertex(startX - offsetX, startY - offsetY, z, 0F, 0F);
+    }
+
+
 
     public void addQuadData(BufferBuilder builder, float x, float y, float width, float height) {
         this.addQuadData(builder, x, y, Z_LEVEL, width, height);

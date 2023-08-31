@@ -1,20 +1,21 @@
 {
   "frameHandler": {
     "storage": {
-      "0": {
+      "0": {},
+      "2": {
         "0": {
           "area": {
-            "x": 561,
-            "width": 1028,
-            "y": 18,
-            "y2": 597,
-            "x2": 1589,
+            "x": 44,
+            "width": 237,
+            "y": 631,
+            "y2": 862,
+            "x2": 281,
             "z": -1000,
-            "height": 579
+            "height": 231
           },
           "depth": 0,
           "color": -1,
-          "texture": "back.png",
+          "texture": "599.jpg",
           "alpha": 1,
           "initialArea": {
             "x": 0,
@@ -25,91 +26,8 @@
             "z": 0,
             "height": 0
           },
-          "id": "599a50e5-4538-4377-9eff-48e8a8329b1e",
+          "id": "84c4d0e3-e6e2-4b64-971e-c50ac94c798b",
           "type": "jne.engine.screens.widgets.Button",
-          "script": ""
-        },
-        "1": {
-          "area": {
-            "x": 912,
-            "width": 200,
-            "y": 197,
-            "y2": 397,
-            "x2": 1112,
-            "z": -1000,
-            "height": 200
-          },
-          "ghostText": "AAAA",
-          "depth": 0,
-          "size": 1,
-          "initialArea": {
-            "x": 0,
-            "width": 0,
-            "y": 0,
-            "y2": 0,
-            "x2": 0,
-            "z": 0,
-            "height": 0
-          },
-          "id": "a5f396f3-cf24-47e7-83ab-a1c3a9055c36",
-          "text": "haha",
-          "type": "jne.engine.screens.widgets.TextBox",
-          "script": ""
-        }
-      },
-      "1": {
-        "0": {
-          "area": {
-            "x": 561,
-            "width": 1028,
-            "y": 18,
-            "y2": 597,
-            "x2": 1589,
-            "z": -1000,
-            "height": 579
-          },
-          "depth": 0,
-          "color": -1,
-          "texture": "back.png",
-          "alpha": 1,
-          "initialArea": {
-            "x": 0,
-            "width": 0,
-            "y": 0,
-            "y2": 0,
-            "x2": 0,
-            "z": 0,
-            "height": 0
-          },
-          "id": "599a50e5-4538-4377-9eff-48e8a8329b1e",
-          "type": "jne.engine.screens.widgets.Button",
-          "script": ""
-        },
-        "1": {
-          "area": {
-            "x": 912,
-            "width": 200,
-            "y": 197,
-            "y2": 397,
-            "x2": 1112,
-            "z": -1000,
-            "height": 200
-          },
-          "ghostText": "AAAA",
-          "depth": 0,
-          "size": 1,
-          "initialArea": {
-            "x": 0,
-            "width": 0,
-            "y": 0,
-            "y2": 0,
-            "x2": 0,
-            "z": 0,
-            "height": 0
-          },
-          "id": "a5f396f3-cf24-47e7-83ab-a1c3a9055c36",
-          "text": "haha",
-          "type": "jne.engine.screens.widgets.TextBox",
           "script": ""
         }
       }

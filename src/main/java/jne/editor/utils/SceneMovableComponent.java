@@ -16,7 +16,7 @@ import java.awt.*;
 import static jne.engine.constants.Colors.trueColor;
 
 @Data
-public class MovableComponent implements IWrapper {
+public class SceneMovableComponent implements IWrapper {
 
     private final Component component;
     private EditingTypes type = EditingTypes.NONE;

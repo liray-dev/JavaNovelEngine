@@ -1,4 +1,4 @@
-package jne.engine.errors;
+package jne.engine.debug;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

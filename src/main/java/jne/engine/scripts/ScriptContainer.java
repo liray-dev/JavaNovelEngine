@@ -1,7 +1,7 @@
 package jne.engine.scripts;
 
 import jne.engine.constants.EnumScriptType;
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.events.types.Event;
 
 import javax.script.Invocable;

@@ -14,7 +14,7 @@ public class Discord {
     public static String largeImageText = "https://discord.gg/K5n6XeMnVU";
     public static String smallImageText = "https://discord.gg/K5n6XeMnVU";
     public static String partyId = "ae488379-351d-4a4f-ad32-2b9b01c91657";
-    public static String joinSecret = "MTI4NzM0OjFpMmhuZToxMjMxMjM= ";
+    public static String joinSecret = "MTI4NzM0OjFpMmhuZToxMjMxMjM=";
 
     public static void launch() {
         instance.Discord_Initialize("1060908435455099030", new DiscordEventHandlers(), true, "");

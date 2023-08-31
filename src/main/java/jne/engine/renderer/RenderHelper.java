@@ -84,6 +84,12 @@ public class RenderHelper implements IWrapper {
         TESSELLATOR.draw();
     }
 
+    public void drawLine(float startX, float startY, float endX, float endY, float z, float lineWidth) {
+        BUILDER.begin();
+        BUFFER_HELPER.addLineData(BUILDER, startX, startY, endX, endY, z, lineWidth);
+        TESSELLATOR.draw();
+    }
+
     public void drawTexturedQuad(float x, float y, float width, float height, Texture texture) {
         texture.bind();
         BUILDER.begin();

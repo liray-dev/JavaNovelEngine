@@ -1,7 +1,7 @@
 package jne.engine.screens.components.constructor;
 
 import jne.editor.utils.constructors.AbstractComponentConstructor;
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.screens.widgets.Component;
 
 import java.lang.reflect.Constructor;

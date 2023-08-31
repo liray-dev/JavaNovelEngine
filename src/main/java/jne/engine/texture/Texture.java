@@ -1,6 +1,6 @@
 package jne.engine.texture;
 
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.utils.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 

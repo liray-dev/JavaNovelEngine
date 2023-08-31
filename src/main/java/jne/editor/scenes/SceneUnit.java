@@ -1,7 +1,8 @@
 package jne.editor.scenes;
 
+import jne.editor.nodes.NodeEditor;
 import jne.editor.utils.EditingTypes;
-import jne.engine.serializer.ISerializable;
+import jne.engine.api.ISerializable;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.Hotkeys;
 import jne.engine.constants.MouseClickType;
@@ -23,19 +24,22 @@ public class SceneUnit extends ComponentsListener implements ISerializable {
     protected final int Z_LEVEL = 0;
 
     public final FrameHandler frameHandler;
+    private final NodeEditor editor;
 
     public EditingTypes currentEditingType = EditingTypes.NONE;
-    public String currentButton = "";
+    public String currentToolID;
 
 
-    public SceneUnit() {
+    public SceneUnit(NodeEditor editor) {
+        this.editor = editor;
         this.frameHandler = new FrameHandler(this);
-        EventListenerHelper.register(this.frameHandler);
-        EventListenerHelper.register(this.frameHandler.storage);
     }
 
     @Override
     public void init() {
+        EventListenerHelper.register(this.frameHandler);
+        EventListenerHelper.register(this.frameHandler.storage);
+
         add(GRAPHICS.button()
                 .id("move")
                 .area(new Area(5, 5, Z_LEVEL, 50, 50))
@@ -44,7 +48,7 @@ public class SceneUnit extends ComponentsListener implements ISerializable {
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         currentEditingType = EditingTypes.MOVE;
-                        currentButton = component.getID();
+                        currentToolID = component.getID();
                         recreate();
                     }
                 })
@@ -58,7 +62,7 @@ public class SceneUnit extends ComponentsListener implements ISerializable {
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         currentEditingType = EditingTypes.RESIZE;
-                        currentButton = component.getID();
+                        currentToolID = component.getID();
                         recreate();
                     }
                 })
@@ -72,7 +76,7 @@ public class SceneUnit extends ComponentsListener implements ISerializable {
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         currentEditingType = EditingTypes.ZOOM;
-                        currentButton = component.getID();
+                        currentToolID = component.getID();
                         recreate();
                         System.out.println(toJson());
                     }
@@ -87,9 +91,21 @@ public class SceneUnit extends ComponentsListener implements ISerializable {
                 .onPress((component, type) -> {
                     if (type == MouseClickType.CLICKED) {
                         openSubscreen(new AddComponentScreen());
-                        currentButton = component.getID();
+                        currentToolID = component.getID();
                         this.frameHandler.storage.selectComponent(null);
                         recreate();
+                    }
+                })
+                .build());
+
+        add(GRAPHICS.button()
+                .id("back")
+                .area(new Area(5, WINDOW.displayHeight - 50, Z_LEVEL, 50, 50))
+                .texture(TextureContainer.get("back"))
+                .color(toolColor)
+                .onPress((component, type) -> {
+                    if (type == MouseClickType.CLICKED) {
+                        WINDOW.screenManager.setScreen(editor);
                     }
                 })
                 .build());
@@ -106,7 +122,7 @@ public class SceneUnit extends ComponentsListener implements ISerializable {
 
     @Override
     public void update() {
-        List<Button> buttons = getComponentsByID(currentButton, Button.class);
+        List<Button> buttons = getComponentsByID(currentToolID, Button.class);
         buttons.forEach(it -> it.color = clickedToolColor);
     }
 
@@ -128,22 +144,22 @@ public class SceneUnit extends ComponentsListener implements ISerializable {
         int button = event.getButton();
         if (button == Hotkeys.moveKey) {
             currentEditingType = EditingTypes.MOVE;
-            currentButton = "move";
+            currentToolID = "move";
             recreate();
         }
         if (button == Hotkeys.resizeKey) {
             currentEditingType = EditingTypes.RESIZE;
-            currentButton = "resize";
+            currentToolID = "resize";
             recreate();
         }
         if (button == Hotkeys.zoomKey) {
             currentEditingType = EditingTypes.ZOOM;
-            currentButton = "zoom";
+            currentToolID = "zoom";
             recreate();
         }
         if (button == Hotkeys.addKey) {
             openSubscreen(new AddComponentScreen());
-            currentButton = "add";
+            currentToolID = "add";
             this.frameHandler.storage.selectComponent(null);
             recreate();
         }

@@ -1,7 +1,7 @@
 package jne.engine.core;
 
 import jne.engine.api.ICore;
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.events.types.TextureRegistryEvent;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.scripts.ScriptController;
@@ -112,7 +112,7 @@ public class JNE implements ICore {
     /**
      * a constant loop that manages all the vital processes of the engine
      */
-    public void loop() throws LWJGLException {
+    protected void loop() throws LWJGLException {
         if (Display.isCreated() && Display.isCloseRequested()) {
             this.shutdown();
         }

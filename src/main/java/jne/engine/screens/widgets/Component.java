@@ -8,7 +8,7 @@ import jne.engine.api.IWrapper;
 import jne.engine.constants.EnumScriptType;
 import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.events.types.ScriptEvent;
 import jne.engine.screens.components.Area;
 import jne.engine.screens.components.ComponentBuilder;

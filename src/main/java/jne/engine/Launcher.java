@@ -1,5 +1,6 @@
 package jne.engine;
 
+import jne.editor.nodes.NodeEditor;
 import jne.engine.core.JNE;
 import jne.engine.utils.GameConfiguration;
 import jne.editor.scenes.SceneUnit;
@@ -53,7 +54,7 @@ public class Launcher {
 
         GameConfiguration configuration = new GameConfiguration(displayInformation, folderInformation);
 
-        (new JNE(configuration, new SceneUnit())).run();
+        (new JNE(configuration, new NodeEditor())).run();
     }
 
 }

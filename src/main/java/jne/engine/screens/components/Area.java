@@ -1,8 +1,8 @@
 package jne.engine.screens.components;
 
 import jne.engine.constants.Direction;
-import jne.engine.errors.DebugManager;
-import jne.engine.serializer.ISerializable;
+import jne.engine.debug.DebugManager;
+import jne.engine.api.ISerializable;
 import org.json.JSONObject;
 import org.lwjgl.input.Keyboard;
 

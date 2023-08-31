@@ -1,6 +1,6 @@
 package jne.engine.utils;
 
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 
 import java.io.File;
 import java.io.IOException;

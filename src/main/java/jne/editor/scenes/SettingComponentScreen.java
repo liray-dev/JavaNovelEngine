@@ -4,7 +4,7 @@ import jne.editor.utils.constructors.AbstractComponentConstructor;
 import jne.engine.constants.Direction;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;

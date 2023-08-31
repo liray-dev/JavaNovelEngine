@@ -7,6 +7,7 @@ import jne.engine.events.types.ScreenEvent;
 import jne.engine.screens.listeners.ComponentsListener;
 import jne.engine.texture.TextureContainer;
 import jne.engine.api.IWrapper;
+import jne.engine.utils.Discord;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -101,6 +102,8 @@ public class ScreenManager implements IWrapper {
         }
 
         EventListenerHelper.register(screen);
+        Discord.state = screen.getClass().getSimpleName();
+        Discord.update();
         this.currentScreen = screen;
         this.resize(WINDOW.displayWidth, WINDOW.displayHeight);
     }
@@ -111,6 +114,8 @@ public class ScreenManager implements IWrapper {
         } else {
             EventListenerHelper.register(subScreen);
             this.subScreens.add(subScreen);
+            Discord.state = subScreen.getClass().getSimpleName();
+            Discord.update();
             subScreen.resize(width, height);
         }
     }
@@ -121,6 +126,13 @@ public class ScreenManager implements IWrapper {
             EventListenerHelper.unregister(subScreen);
             subScreen.close();
             this.subScreens.remove(subScreen);
+            if (!subScreens.isEmpty()) {
+                Discord.state = subScreens.get(subScreens.size() - 1).getClass().getSimpleName();
+                Discord.update();
+            } else {
+                Discord.state = currentScreen.getClass().getSimpleName();
+                Discord.update();
+            }
         } else {
             System.out.println("Additional screen not found");
         }

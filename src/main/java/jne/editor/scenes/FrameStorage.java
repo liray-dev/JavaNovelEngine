@@ -2,11 +2,11 @@ package jne.editor.scenes;
 
 import jne.editor.utils.EditingTypes;
 import jne.editor.utils.Frame;
-import jne.editor.utils.MovableComponent;
-import jne.engine.serializer.ISerializable;
+import jne.editor.utils.SceneMovableComponent;
+import jne.engine.api.ISerializable;
 import jne.engine.constants.EventPriority;
 import jne.engine.constants.MouseClickType;
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.events.types.ScreenEvent;
 import jne.engine.events.utils.SubscribeEvent;
 import jne.engine.screens.components.Area;
@@ -31,7 +31,7 @@ public class FrameStorage extends ComponentsListener implements ISerializable {
 
     public int id = 0;
     public Frame currentFrame = new Frame(id);
-    public MovableComponent movableComponent = new MovableComponent(null);
+    public SceneMovableComponent sceneMovableComponent = new SceneMovableComponent(null);
 
     public FrameStorage(FrameHandler frameHandler) {
         this.frameHandler = frameHandler;
@@ -69,7 +69,7 @@ public class FrameStorage extends ComponentsListener implements ISerializable {
         if (component == null) {
             this.lastClickedComponent = null;
         }
-        this.movableComponent = new MovableComponent(component);
+        this.sceneMovableComponent = new SceneMovableComponent(component);
     }
 
     public void selectFrame(Frame frame) {
@@ -103,7 +103,6 @@ public class FrameStorage extends ComponentsListener implements ISerializable {
         return collect.get(0);
     }
 
-
     public boolean hasFrame(int id) {
         return frames.stream().anyMatch(it -> it.getId() == id);
     }
@@ -122,12 +121,13 @@ public class FrameStorage extends ComponentsListener implements ISerializable {
 
     public void deleteFrame(int id) {
         if (hasFrame(id)) {
-            Frame frame = getFrame(id);
             if (hasFrame(id - 1)) {
-                frames.remove(frame);
-                Frame frame2 = getFrame(id - 1);
+                load(getFrame(id - 1));
+                frames.removeIf(it -> it.getId() == id);
                 clear();
-                load(frame2);
+            } else {
+                getFrame(id).getComponents().clear();
+                clearComponents();
             }
         }
     }
@@ -147,34 +147,34 @@ public class FrameStorage extends ComponentsListener implements ISerializable {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void render(ScreenEvent.Render event) {
         super.render(event);
-        movableComponent.render(event);
+        sceneMovableComponent.render(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void input(ScreenEvent.MouseInput event) {
         super.input(event);
-        movableComponent.input(event);
+        sceneMovableComponent.input(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void clickMove(ScreenEvent.MouseClickMove event) {
         super.clickMove(event);
-        movableComponent.clickMove(event);
+        sceneMovableComponent.clickMove(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void move(ScreenEvent.MouseMove event) {
         super.move(event);
-        movableComponent.move(event);
+        sceneMovableComponent.move(event);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void tick(ScreenEvent.Tick event) {
         super.tick(event);
-        movableComponent.tick(event);
-        movableComponent.setType(getEditType());
+        sceneMovableComponent.tick(event);
+        sceneMovableComponent.setType(getEditType());
 
-        if (movableComponent.getComponent() == null && lastClickedComponent != null) {
+        if (sceneMovableComponent.getComponent() == null && lastClickedComponent != null) {
             this.selectComponent(lastClickedComponent);
             lastClickedComponent = null;
         }
@@ -216,6 +216,7 @@ public class FrameStorage extends ComponentsListener implements ISerializable {
                     }
                 });
                 add(component);
+                currentFrame.getComponents().add(component);
 
                 // Debug
                 String name = component.getClass().getSimpleName();

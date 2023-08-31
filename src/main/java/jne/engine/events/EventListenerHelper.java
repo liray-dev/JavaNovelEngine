@@ -1,6 +1,6 @@
 package jne.engine.events;
 
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 import jne.engine.events.types.Event;
 import jne.engine.events.utils.EventListener;
 import jne.engine.events.utils.SubscribeEvent;

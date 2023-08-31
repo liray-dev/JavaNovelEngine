@@ -1,4 +1,4 @@
-package jne.engine.errors;
+package jne.engine.debug;
 
 import jne.engine.screens.components.Area;
 import jne.engine.screens.widgets.Label;

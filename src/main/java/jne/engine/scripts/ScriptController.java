@@ -1,6 +1,6 @@
 package jne.engine.scripts;
 
-import jne.engine.errors.DebugManager;
+import jne.engine.debug.DebugManager;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;

@@ -4,7 +4,6 @@ import jne.engine.constants.KeyboardType;
 import jne.engine.constants.MouseClickType;
 import jne.engine.screens.components.Area;
 import jne.engine.scripts.ScriptContainer;
-import jne.engine.serializer.ISerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

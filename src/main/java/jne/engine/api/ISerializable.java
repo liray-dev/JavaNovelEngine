@@ -1,4 +1,4 @@
-package jne.engine.serializer;
+package jne.engine.api;
 
 import org.json.JSONObject;
 
